@@ -23,8 +23,8 @@ type PairHeap struct {
 type PairHeapNode struct {
 	// The current Top of the heap
 	Value    interface{}
-	// List of sub-heaps all containing values less than the Top of the heap
-	subHeaps []*PairHeapNode
+	// List of children PairHeapNodes all containing values less than the Top of the heap
+	children []*PairHeapNode
 	// A reference to the parent Heap Node
 	parent   *PairHeapNode
 }
@@ -82,20 +82,19 @@ func (p *PairHeap) DeleteMin() interface{} {
 	if p.Root.Value == nil {
 		return nil
 	}
-	result := mergePairs(&p.Root, p.Root.subHeaps, p.Comparator)
+	result := mergePairs(&p.Root, p.Root.children, p.Comparator)
 	return result.Value
 }
 
-// Visits root and all of its subHeaps recursively invoking the callback function
+// Visits root and all of its children recursively invoking the callback function
 func (p *PairHeap) Do(cb func(v interface{}))  {
 	if p.IsEmpty() {
 		return
 	}
 	// Call root first
 	cb(p.Root)
-
 	// Then continue to children
-	visitSubHeaps(p.Root.subHeaps, cb)
+	visitChildren(p.Root.children, cb)
 }
 
 // Exhausting search of the element that matches v. Returns it as a PairHeapNode
@@ -108,17 +107,17 @@ func (p *PairHeap) Find(v interface{}) *PairHeapNode {
 	if p.Comparator(p.Root.Value, v) == 0 {
 		return p.Root
 	} else {
-		return p.findIn(p.Root.subHeaps, v)
+		return p.findInChildren(p.Root.children, v)
 	}
 }
 
-func (p *PairHeap)findIn(subHeaps []*PairHeapNode, v interface{}) *PairHeapNode  {
-	if len(subHeaps) == 0 {
+func (p *PairHeap) findInChildren(children []*PairHeapNode, v interface{}) *PairHeapNode  {
+	if len(children) == 0 {
 		return nil
 	}
 	var node *PairHeapNode
 loop:
-	for _, heapNode := range p.Root.subHeaps {
+	for _, heapNode := range p.Root.children {
 		cmp := p.Comparator(heapNode.Value, v)
 		switch {
 		case cmp == 0: // found
@@ -127,7 +126,7 @@ loop:
 		case cmp > 0:
 			// current node has a higher value that item.
 			// search in child nodes as they have lower value
-			node = p.findIn(heapNode.subHeaps, v)
+			node = p.findInChildren(heapNode.children, v)
 		case cmp < 0:
 			// Continue as we know that the child nodes have even lower value
 			continue
@@ -136,13 +135,13 @@ loop:
 	return node
 }
 
-func visitSubHeaps(subHeaps []*PairHeapNode, cb func(v interface{}))  {
-	if len(subHeaps) == 0 {
+func visitChildren(children []*PairHeapNode, cb func(v interface{}))  {
+	if len(children) == 0 {
 		return
 	}
-	for _, heapNode := range subHeaps {
+	for _, heapNode := range children {
 		cb(heapNode)
-		visitSubHeaps(heapNode.subHeaps, cb)
+		visitChildren(heapNode.children, cb)
 	}
 }
 
@@ -156,12 +155,12 @@ func merge(first **PairHeapNode, second *PairHeapNode, c go_heaps.Comparator) *P
 	cmp := c(q.Value, second.Value)
 	if cmp < 0 {
 		// put 'second' as the first child of 'first' and update the parent
-		q.subHeaps = append([]*PairHeapNode{second}, q.subHeaps...)
+		q.children = append([]*PairHeapNode{second}, q.children...)
 		second.parent = *first
 		return *first
 	} else {
 		// put 'first' as the first child of 'second' and update the parent
-		second.subHeaps = append([]*PairHeapNode{q}, second.subHeaps...)
+		second.children = append([]*PairHeapNode{q}, second.children...)
 		q.parent = second
 		*first = second
 		return second
