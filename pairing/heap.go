@@ -86,6 +86,66 @@ func (p *PairHeap) DeleteMin() interface{} {
 	return result.Value
 }
 
+// Visits root and all of its subHeaps recursively invoking the callback function
+func (p *PairHeap) Do(cb func(v interface{}))  {
+	if p.IsEmpty() {
+		return
+	}
+	// Call root first
+	cb(p.Root)
+
+	// Then continue to children
+	visitSubHeaps(p.Root.subHeaps, cb)
+}
+
+// Exhausting search of the element that matches v. Returns it as a PairHeapNode
+// The complexity is O(n) amortized.
+func (p *PairHeap) Find(v interface{}) *PairHeapNode {
+	if p.IsEmpty() {
+		return nil
+	}
+
+	if p.Comparator(p.Root.Value, v) == 0 {
+		return p.Root
+	} else {
+		return p.findIn(p.Root.subHeaps, v)
+	}
+}
+
+func (p *PairHeap)findIn(subHeaps []*PairHeapNode, v interface{}) *PairHeapNode  {
+	if len(subHeaps) == 0 {
+		return nil
+	}
+	var node *PairHeapNode
+loop:
+	for _, heapNode := range p.Root.subHeaps {
+		cmp := p.Comparator(heapNode.Value, v)
+		switch {
+		case cmp == 0: // found
+			node = heapNode
+			break loop
+		case cmp > 0:
+			// current node has a higher value that item.
+			// search in child nodes as they have lower value
+			node = p.findIn(heapNode.subHeaps, v)
+		case cmp < 0:
+			// Continue as we know that the child nodes have even lower value
+			continue
+		}
+	}
+	return node
+}
+
+func visitSubHeaps(subHeaps []*PairHeapNode, cb func(v interface{}))  {
+	if len(subHeaps) == 0 {
+		return
+	}
+	for _, heapNode := range subHeaps {
+		cb(heapNode)
+		visitSubHeaps(heapNode.subHeaps, cb)
+	}
+}
+
 func merge(first **PairHeapNode, second *PairHeapNode, c go_heaps.Comparator) *PairHeapNode {
 	q := *first
 	if q.Value == nil { // Case when root is empty

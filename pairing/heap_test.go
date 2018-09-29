@@ -60,3 +60,24 @@ func (suite *PairingHeapTestSuite) TestInsert() {
 	n3 := suite.heap.DeleteMin()
 	assert.NotEqual(suite.T(), n3, suite.heap.FindMin())
 }
+
+func (suite *PairingHeapTestSuite) TestFind() {
+	node := suite.heap.Find(10)
+	assert.Nil(suite.T(), node)
+
+	suite.heap.Insert(4)
+
+	node = suite.heap.Find(4)
+	assert.NotNil(suite.T(),node)
+	assert.Equal(suite.T(),node.Value, 4)
+
+	suite.heap.Insert(8)
+	suite.heap.Insert(2)
+	suite.heap.Insert(5)
+	suite.heap.Insert(3)
+	suite.heap.Insert(9)
+
+	node = suite.heap.Find(9)
+	assert.NotNil(suite.T(),node)
+	assert.Equal(suite.T(),node.Value, 9)
+}

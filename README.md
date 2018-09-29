@@ -61,6 +61,7 @@ func main()  {
 | FindMin       | Θ(1)          |
 | DeleteMin     | O(log n)      |
 | Insert        | Θ(1)          |
+| Find          | O(n)          |
 
 
 ## LICENCE
