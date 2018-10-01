@@ -55,6 +55,7 @@ func (p *PairHeap) IsEmpty() bool {
 	return p.Root.Value == nil
 }
 
+// Resets the current PairHeap
 func (p *PairHeap) Clear() {
 	p.Root = &PairHeapNode{}
 }
@@ -62,7 +63,7 @@ func (p *PairHeap) Clear() {
 // Find the smallest item in the priority queue.
 // The complexity is O(1).
 func (p *PairHeap) FindMin() interface{} {
-	if p.Root.Value == nil {
+	if p.IsEmpty() {
 		return nil
 	}
 	return p.Root.Value
@@ -79,7 +80,7 @@ func (p *PairHeap) Insert(v interface{}) interface{}  {
 // DeleteMin removes the top most value from the PairHeap and returns the combined PairHeap
 // The complexity is O(log n) amortized.
 func (p *PairHeap) DeleteMin() interface{} {
-	if p.Root.Value == nil {
+	if p.IsEmpty() {
 		return nil
 	}
 	result := mergePairs(&p.Root, p.Root.children, p.Comparator)

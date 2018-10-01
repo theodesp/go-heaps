@@ -50,12 +50,12 @@ func StringComparator(a, b interface{}) int {
 
 // IntComparator provides a basic comparison on int
 func IntComparator(a, b interface{}) int {
-	aAsserted := a.(int)
-	bAsserted := b.(int)
+	a1 := a.(int)
+	a2 := b.(int)
 	switch {
-	case aAsserted > bAsserted:
+	case a1 > a2:
 		return 1
-	case aAsserted < bAsserted:
+	case a1 < a2:
 		return -1
 	default:
 		return 0
