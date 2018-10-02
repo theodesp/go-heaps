@@ -9,9 +9,6 @@ import (
 	"go-heaps"
 )
 
-// Compile time check
-var _ go_heaps.Interface = (*PairHeap)(nil)
-
 // PairHeap represents a Pairing Heap.
 // The zero value for PairHeap Root is an empty Heap.
 type PairHeap struct {
@@ -22,11 +19,12 @@ type PairHeap struct {
 // PairHeapNode contains the current Value and the list if the sub-heaps
 type PairHeapNode struct {
 	// for use by client; untouched by this library
-	Value    interface{}
+	Value interface{}
 	// List of children PairHeapNodes all containing values less than the Top of the heap
 	children []*PairHeapNode
 	// A reference to the parent Heap Node
-	parent   *PairHeapNode
+	parent *PairHeapNode
+	heap   *PairHeap // The heap to which this node belongs.
 }
 
 func (n *PairHeapNode) detach() []*PairHeapNode {
@@ -90,10 +88,10 @@ func (p *PairHeap) FindMin() interface{} {
 
 // Inserts the value to the PairHeap and returns the PairHeapNode
 // The complexity is O(1).
-func (p *PairHeap) Insert(v interface{}) interface{}  {
-	n := PairHeapNode{Value: v}
+func (p *PairHeap) Insert(v interface{}) *PairHeapNode {
+	n := PairHeapNode{Value: v, heap: p}
 	merge(&p.Root, &n, p.Comparator)
-	return v
+	return &n
 }
 
 // DeleteMin removes the top most value from the PairHeap and returns it
@@ -108,40 +106,40 @@ func (p *PairHeap) DeleteMin() interface{} {
 
 // Adjusts the value to the PairHeapNode Value and returns it
 // The complexity is O(n) amortized.
-func (p *PairHeap) Adjust(old, new interface{}) interface{} {
-	node := p.Find(old)
-	if node == nil {
+func (p *PairHeap) Adjust(node *PairHeapNode, v interface{}) *PairHeapNode {
+	if node == nil || node.heap != p {
 		return nil
 	}
+
 	if node == p.Root {
 		p.DeleteMin()
-		return p.Insert(new)
+		return p.Insert(v)
 	} else {
-		children:= node.detach()
-		mergePairs(&p.Root, append(p.Root.children, children...), p.Comparator)
-		return node.Value
+		children := node.detach()
+		node.Value = v
+		mergePairs(&p.Root, append(p.Root.children, append([]*PairHeapNode{node}, children...)...), p.Comparator)
+		return node
 	}
 }
 
 // Deletes a PairHeapNode from the heap and returns the Value
-// The complexity is O(n) amortized.
-func (p *PairHeap) Delete(v interface{}) interface{}  {
-	node := p.Find(v)
-	if node == nil {
+// The complexity is O(log n) amortized.
+func (p *PairHeap) Delete(node *PairHeapNode) interface{} {
+	if node == nil || node.heap != p {
 		return nil
 	}
 	if node == p.Root {
-		return p.DeleteMin()
+		p.DeleteMin()
 	} else {
-		children:= node.detach()
+		children := node.detach()
 		mergePairs(&p.Root, append(p.Root.children, children...), p.Comparator)
-		return node.Value
 	}
+	return node.Value
 }
 
 // Do calls function cb on each element of the PairingHeap, in order of appearance.
 // The behavior of Do is undefined if cb changes *p.
-func (p *PairHeap) Do(cb func(v interface{}))  {
+func (p *PairHeap) Do(cb func(v interface{})) {
 	if p.IsEmpty() {
 		return
 	}
@@ -165,7 +163,7 @@ func (p *PairHeap) Find(v interface{}) *PairHeapNode {
 	}
 }
 
-func (p *PairHeap) findInChildren(children []*PairHeapNode, v interface{}) *PairHeapNode  {
+func (p *PairHeap) findInChildren(children []*PairHeapNode, v interface{}) *PairHeapNode {
 	if len(children) == 0 {
 		return nil
 	}
@@ -187,7 +185,7 @@ loop:
 	return node
 }
 
-func visitChildren(children []*PairHeapNode, cb func(v interface{}))  {
+func visitChildren(children []*PairHeapNode, cb func(v interface{})) {
 	if len(children) == 0 {
 		return
 	}
@@ -235,7 +233,9 @@ func mergePairs(root **PairHeapNode, heaps []*PairHeapNode, c go_heaps.Comparato
 	}
 	var merged *PairHeapNode
 	for { // iteratively merge heaps
-		if len(heaps) == 0 { break }
+		if len(heaps) == 0 {
+			break
+		}
 		if len(heaps) == 1 {
 			// merge odd one out
 			merged = merge(&merged, heaps[0], c)

@@ -19,6 +19,8 @@ type TwoThreeHeap struct {
 type TwoThreeHeapNode struct {
 	// for use by client; untouched by this library
 	Value interface{}
+	// References to relevant nodes
+	parent, left, right, child  *TwoThreeHeapNode
 }
 
 // Init initializes or clears the TwoThreeHeap
