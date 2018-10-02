@@ -19,7 +19,6 @@ type PairHeap struct {
 	Root       *PairHeapNode
 }
 
-
 // PairHeapNode contains the current Value and the list if the sub-heaps
 type PairHeapNode struct {
 	// for use by client; untouched by this library
