@@ -81,3 +81,40 @@ func (suite *PairingHeapTestSuite) TestFind() {
 	assert.NotNil(suite.T(),node)
 	assert.Equal(suite.T(),node.Value, 9)
 }
+
+func (suite *PairingHeapTestSuite) TestAdjust() {
+	suite.heap.Insert(4)
+	suite.heap.Insert(8)
+	suite.heap.Insert(2)
+	suite.heap.Insert(5)
+	suite.heap.Insert(3)
+	suite.heap.Insert(9)
+
+	root := suite.heap.FindMin()
+	assert.NotNil(suite.T(), suite.heap.Adjust(root, 10))
+	assert.NotEqual(suite.T(), suite.heap.FindMin(), root)
+	assert.NotNil(suite.T(), suite.heap.Find(10))
+	assert.NotNil(suite.T(), suite.heap.Find(9))
+
+	assert.Nil(suite.T(), suite.heap.Adjust(2, 5))
+	assert.NotNil(suite.T(), suite.heap.Adjust(10, 5))
+	assert.NotNil(suite.T(), suite.heap.Adjust(9, 5))
+	assert.NotNil(suite.T(), suite.heap.Find(5))
+}
+
+func (suite *PairingHeapTestSuite) TestDelete() {
+	suite.heap.Insert(4)
+	suite.heap.Insert(8)
+	suite.heap.Insert(2)
+	suite.heap.Insert(5)
+	suite.heap.Insert(3)
+	suite.heap.Insert(9)
+
+	assert.Nil(suite.T(), suite.heap.Delete(10))
+	assert.NotNil(suite.T(), suite.heap.Delete(4))
+	assert.Nil(suite.T(), suite.heap.Find(4))
+	assert.NotNil(suite.T(), suite.heap.Find(8))
+	assert.NotNil(suite.T(), suite.heap.Find(5))
+	assert.NotNil(suite.T(), suite.heap.Find(3))
+	assert.NotNil(suite.T(), suite.heap.Find(9))
+}
