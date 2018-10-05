@@ -25,17 +25,12 @@ type Item interface {
 
 }
 
-type String struct {
-	Value string
-}
-
-type Integer struct {
-	Value int
-}
+type String string
+type Integer int
 
 func (a String) Compare(b Item) int {
-	s1 := a.Value
-	s2 := b.(String).Value
+	s1 := a
+	s2 := b.(String)
 	min := len(s2)
 	if len(s1) < len(s2) {
 		min = len(s1)
@@ -57,8 +52,8 @@ func (a String) Compare(b Item) int {
 }
 
 func (a Integer) Compare(b Item) int {
-	a1 := a.Value
-	a2 := b.(Integer).Value
+	a1 := a
+	a2 := b.(Integer)
 	switch {
 	case a1 > a2:
 		return 1
