@@ -225,11 +225,6 @@ func mergePairs(root **PairHeapNode, heaps []*PairHeapNode) *PairHeapNode {
 		if len(heaps) == 0 {
 			break
 		}
-		if len(heaps) == 1 {
-			// merge odd one out
-			merged = merge(&merged, heaps[0])
-			break
-		}
 		if merged == nil {
 			merged = merge(&heaps[0], heaps[1])
 			heaps = heaps[2:]
