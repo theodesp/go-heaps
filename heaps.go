@@ -3,31 +3,39 @@ package go_heaps
 // Interface is basic interface that all Heaps implement.
 type Interface interface {
 	// Inserts an element to the heap and returns it
-	Insert(v interface{}) interface{}
+	Insert(v Item) Item
 
 	// DeleteMin deletes and returns the smallest element
-	DeleteMin() interface{}
+	DeleteMin() Item
 
 	// FindMin returns the minimum element
-	FindMin() interface{}
+	FindMin() Item
 
 	// Removes all items
 	Clear()
 }
 
-// Comparator will make type assertion (see IntComparator for example),
-// which will panic if a or b are not of the asserted type.
-//
-// Should return a number:
-//    negative , if a < b
-//    zero     , if a == b
-//    positive , if a > b
-type Comparator func(a, b interface{}) int
+// Item is the basic interface 
+type Item interface {
+	// Should return a number:
+	//    negative , if a < b
+	//    zero     , if a == b
+	//    positive , if a > b
+	Compare(than Item) int
 
-// StringComparator provides a fast comparison on strings
-func StringComparator(a, b interface{}) int {
-	s1 := a.(string)
-	s2 := b.(string)
+}
+
+type String struct {
+	Value string
+}
+
+type Integer struct {
+	Value int
+}
+
+func (a String) Compare(b Item) int {
+	s1 := a.Value
+	s2 := b.(String).Value
 	min := len(s2)
 	if len(s1) < len(s2) {
 		min = len(s1)
@@ -48,10 +56,9 @@ func StringComparator(a, b interface{}) int {
 	return 0
 }
 
-// IntComparator provides a basic comparison on int
-func IntComparator(a, b interface{}) int {
-	a1 := a.(int)
-	a2 := b.(int)
+func (a Integer) Compare(b Item) int {
+	a1 := a.Value
+	a2 := b.(Integer).Value
 	switch {
 	case a1 > a2:
 		return 1
