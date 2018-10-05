@@ -1,7 +1,5 @@
 package two_three
 
-import "go-heaps"
-
 // Package two_three implements a 2-3 heap Data structure
 //
 // Structure is not thread safe.
@@ -11,7 +9,6 @@ import "go-heaps"
 // TwoThreeHeap represents a 2-3 Heap.
 // The zero value for TwoThreeHeap Root is an empty Heap.
 type TwoThreeHeap struct {
-	Comparator go_heaps.Comparator // Key comparator
 	children   []*TwoThreeHeapNode
 }
 
@@ -24,24 +21,13 @@ type TwoThreeHeapNode struct {
 }
 
 // Init initializes or clears the TwoThreeHeap
-func (p *TwoThreeHeap) Init(c go_heaps.Comparator) *TwoThreeHeap {
+func (p *TwoThreeHeap) Init() *TwoThreeHeap {
 	p.children = []*TwoThreeHeapNode{}
-	p.Comparator = c
 	return p
 }
 
-// New returns an initialized TwoThreeHeap with the provided Comparator.
-func New(c go_heaps.Comparator) *TwoThreeHeap { return new(TwoThreeHeap).Init(c) }
-
-// NewWithIntComparator instantiates an TwoThreeHeap with the IntComparator, i.e. keys are of type int.
-func NewWithIntComparator() *TwoThreeHeap {
-	return new(TwoThreeHeap).Init(go_heaps.IntComparator)
-}
-
-// NewWithStringComparator instantiates an TwoThreeHeap with the StringComparator, i.e. keys are of type string.
-func NewWithStringComparator() *TwoThreeHeap {
-	return new(TwoThreeHeap).Init(go_heaps.StringComparator)
-}
+// New returns an initialized TwoThreeHeap
+func New() *TwoThreeHeap { return new(TwoThreeHeap).Init() }
 
 // IsEmpty returns true if TwoThreeHeap p is empty.
 // The complexity is O(1).
