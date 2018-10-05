@@ -6,7 +6,7 @@
 package pairing
 
 import (
-	"github.com/mb-14/go-heaps"
+	"github.com/theodesp/go-heaps"
 )
 
 // PairHeap represents a Pairing Heap.

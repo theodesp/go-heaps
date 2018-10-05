@@ -4,7 +4,7 @@ import (
 	"testing"
 	"github.com/stretchr/testify/suite"
 	"github.com/stretchr/testify/assert"
-	"github.com/mb-14/go-heaps"
+	"github.com/theodesp/go-heaps"
 )
 
 type PairingHeapTestSuite struct {

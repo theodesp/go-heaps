@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/mb-14/go-heaps"
-	"github.com/mb-14/go-heaps/pairing"
+	"github.com/theodesp/go-heaps"
+	"github.com/theodesp/go-heaps/pairing"
 	"fmt"
 )
 
