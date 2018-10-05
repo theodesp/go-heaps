@@ -15,7 +15,7 @@ type Interface interface {
 	Clear()
 }
 
-// Item is the basic interface 
+// Item is the basic element that is inserted in a heap
 type Item interface {
 	// Should return a number:
 	//    negative , if a < b
