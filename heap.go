@@ -22,7 +22,6 @@ type Item interface {
 	//    zero     , if a == b
 	//    positive , if a > b
 	Compare(than Item) int
-
 }
 
 type String string

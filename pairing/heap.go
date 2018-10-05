@@ -6,10 +6,10 @@
 package pairing
 
 import (
-	"github.com/theodesp/go-heaps"
+	heap "github.com/theodesp/go-heaps"
 )
 
-// PairHeap represents a Pairing Heap.
+// PairHeap is an implementation of a Pairing Heap.
 // The zero value for PairHeap Root is an empty Heap.
 type PairHeap struct {
 	root       *PairHeapNode
@@ -18,7 +18,7 @@ type PairHeap struct {
 // PairHeapNode contains the current Value and the list if the sub-heaps
 type PairHeapNode struct {
 	// for use by client; untouched by this library
-	Value go_heaps.Item
+	Value heap.Item
 	// List of children PairHeapNodes all containing values less than the Top of the heap
 	children []*PairHeapNode
 	// A reference to the parent Heap Node
@@ -51,9 +51,8 @@ func (p *PairHeap) Init() *PairHeap {
 	return p
 }
 
-// New returns an initialized PairHeap with the provided Comparator.
+// New returns an initialized PairHeap.
 func New() *PairHeap { return new(PairHeap).Init() }
-
 
 // IsEmpty returns true if PairHeap p is empty.
 // The complexity is O(1).
@@ -68,67 +67,89 @@ func (p *PairHeap) Clear() {
 
 // Find the smallest item in the priority queue.
 // The complexity is O(1).
-func (p *PairHeap) FindMin() go_heaps.Item {
+func (p *PairHeap) FindMin() heap.Item {
 	if p.IsEmpty() {
 		return nil
 	}
 	return p.root.Value
 }
 
-// Inserts the value to the PairHeap and returns the PairHeapNode
+// Inserts the value to the PairHeap and returns the Value
 // The complexity is O(1).
-func (p *PairHeap) Insert(v go_heaps.Item) *PairHeapNode {
+func (p *PairHeap) Insert(v heap.Item) heap.Item {
 	n := PairHeapNode{Value: v, heap: p}
 	merge(&p.root, &n)
-	return &n
+	return n.Value
 }
+
+
+// toDelete details what item to remove in a node call.
+type toDelete int
+
+const (
+	removeItem toDelete = iota   // removes the given item
+	removeMin                  // removes min item in the heap
+)
 
 // DeleteMin removes the top most value from the PairHeap and returns it
 // The complexity is O(log n) amortized.
-func (p *PairHeap) DeleteMin() interface{} {
-	if p.IsEmpty() {
-		return nil
+func (p *PairHeap) DeleteMin() heap.Item {
+	return p.deleteItem(nil, removeMin)
+}
+
+// Deletes a PairHeapNode from the heap and returns the Value
+// The complexity is O(log n) amortized.
+func (p *PairHeap) Delete(item heap.Item) heap.Item {
+	return p.deleteItem(item, removeItem)
+}
+
+func (p *PairHeap) deleteItem(item heap.Item, typ toDelete) heap.Item {
+	var result PairHeapNode
+
+	switch typ {
+	case removeMin:
+		if len(p.root.children) == 0 {
+			result = *p.root
+			p.root.Value = nil
+		} else {
+			result = *mergePairs(&p.root, p.root.children)
+		}
+	case removeItem:
+		node := p.Find(item)
+		if node == nil {
+			return nil
+		} else {
+			children := node.detach()
+			result = *mergePairs(&p.root, append(p.root.children, children...))
+		}
+	default:
+		panic("invalid type")
 	}
-	result := mergePairs(&p.root, p.root.children)
 	return result.Value
 }
 
 // Adjusts the value to the PairHeapNode Value and returns it
 // The complexity is O(n) amortized.
-func (p *PairHeap) Adjust(node *PairHeapNode, v go_heaps.Item) *PairHeapNode {
-	if node == nil || node.heap != p {
+func (p *PairHeap) Adjust(item heap.Item, new heap.Item) heap.Item {
+	node := p.Find(item)
+	if node == nil {
 		return nil
 	}
 
 	if node == p.root {
 		p.DeleteMin()
-		return p.Insert(v)
+		return p.Insert(new)
 	} else {
 		children := node.detach()
-		node.Value = v
+		node.Value = new
 		mergePairs(&p.root, append(p.root.children, append([]*PairHeapNode{node}, children...)...))
-		return node
+		return node.Value
 	}
-}
-
-// Deletes a PairHeapNode from the heap and returns the Value
-// The complexity is O(log n) amortized.
-func (p *PairHeap) Delete(node *PairHeapNode) interface{} {
-	if node == nil || node.heap != p {
-		return nil
-	}
-	if node == p.root {
-		p.DeleteMin()
-	} else {
-		children := node.detach()
-		mergePairs(&p.root, append(p.root.children, children...))
-	}
-	return node.Value
 }
 
 // Do calls function cb on each element of the PairingHeap, in order of appearance.
 // The behavior of Do is undefined if cb changes *p.
-func (p *PairHeap) Do(cb func(v interface{})) {
+func (p *PairHeap) Do(cb func(item heap.Item)) {
 	if p.IsEmpty() {
 		return
 	}
@@ -140,7 +161,7 @@ func (p *PairHeap) Do(cb func(v interface{})) {
 
 // Exhausting search of the element that matches v. Returns it as a PairHeapNode
 // The complexity is O(n) amortized.
-func (p *PairHeap) Find(v go_heaps.Item) *PairHeapNode {
+func (p *PairHeap) Find(v heap.Item) *PairHeapNode {
 	if p.IsEmpty() {
 		return nil
 	}
@@ -152,7 +173,7 @@ func (p *PairHeap) Find(v go_heaps.Item) *PairHeapNode {
 	}
 }
 
-func (p *PairHeap) findInChildren(children []*PairHeapNode, v go_heaps.Item) *PairHeapNode {
+func (p *PairHeap) findInChildren(children []*PairHeapNode, v heap.Item) *PairHeapNode {
 	if len(children) == 0 {
 		return nil
 	}
@@ -174,7 +195,7 @@ loop:
 	return node
 }
 
-func visitChildren(children []*PairHeapNode, cb func(v interface{})) {
+func visitChildren(children []*PairHeapNode, cb func(item heap.Item)) {
 	if len(children) == 0 {
 		return
 	}
