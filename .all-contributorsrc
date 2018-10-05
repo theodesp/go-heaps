@@ -1,0 +1,22 @@
+{
+  "projectName": "go-heaps",
+  "projectOwner": "theodesp",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "mb-14",
+      "name": "Miroojin Bakshi",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/1137632?v=4",
+      "profile": "http://mb-14.github.io",
+      "contributions": [
+        "code"
+      ]
+    }
+  ]
+}

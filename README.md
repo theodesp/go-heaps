@@ -1,4 +1,5 @@
 go-heaps
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
 ---
 <a href="https://godoc.org/github.com/theodesp/go-heaps">
 <img src="https://godoc.org/github.com/theodesp/go-heaps?status.svg" alt="GoDoc">
@@ -65,6 +66,19 @@ func main()  {
 | Find          | O(n)          |
 | Delete        | O(log n)          |
 | Adjust        | O(log n)          |
+
+
+## Contributors
+
+Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+| [<img src="https://avatars1.githubusercontent.com/u/1137632?v=4" width="100px;"/><br /><sub><b>Miroojin Bakshi</b></sub>](http://mb-14.github.io)<br />[💻](https://github.com/theodesp/go-heaps/commits?author=mb-14 "Code") |
+| :---: |
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind welcome!
 
 
 ## LICENCE
