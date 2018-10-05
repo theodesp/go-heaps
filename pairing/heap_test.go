@@ -90,7 +90,7 @@ func (suite *PairingHeapTestSuite) TestAdjust() {
 	suite.heap.Insert(3)
 	suite.heap.Insert(9)
 
-	root := suite.heap.Root
+	root := suite.heap.Find(2)
 	assert.NotNil(suite.T(), suite.heap.Adjust(root, 10))
 	assert.NotEqual(suite.T(), suite.heap.FindMin(), root)
 	assert.NotNil(suite.T(), suite.heap.Find(10))
