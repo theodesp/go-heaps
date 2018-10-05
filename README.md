@@ -36,16 +36,17 @@ $ go get -u github.com/theodesp/go-heaps
 package main
 
 import (
-	pairingHeap "go-heaps/pairing"
+	"github.com/theodesp/go-heaps"
+	pairingHeap "github.com/theodesp/go-heaps/pairing"
 	"fmt"
 )
 
 func main()  {
-	heap := pairingHeap.NewWithIntComparator()
-	heap.Insert(4)
-	heap.Insert(3)
-	heap.Insert(2)
-	heap.Insert(5)
+	heap := pairingHeap.New()
+	heap.Insert(go_heaps.Integer(4))
+	heap.Insert(go_heaps.Integer(3))
+	heap.Insert(go_heaps.Integer(2))
+	heap.Insert(go_heaps.Integer(5))
 
 	fmt.Println(heap.DeleteMin()) // 2
 	fmt.Println(heap.DeleteMin()) // 3
