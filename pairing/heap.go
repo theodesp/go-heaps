@@ -12,7 +12,7 @@ import (
 // PairHeap represents a Pairing Heap.
 // The zero value for PairHeap Root is an empty Heap.
 type PairHeap struct {
-	Root       *PairHeapNode
+	root       *PairHeapNode
 }
 
 // PairHeapNode contains the current Value and the list if the sub-heaps
@@ -47,7 +47,7 @@ func (n *PairHeapNode) detach() []*PairHeapNode {
 
 // Init initializes or clears the PairHeap
 func (p *PairHeap) Init() *PairHeap {
-	p.Root = &PairHeapNode{}
+	p.root = &PairHeapNode{}
 	return p
 }
 
@@ -58,12 +58,12 @@ func New() *PairHeap { return new(PairHeap).Init() }
 // IsEmpty returns true if PairHeap p is empty.
 // The complexity is O(1).
 func (p *PairHeap) IsEmpty() bool {
-	return p.Root.Value == nil
+	return p.root.Value == nil
 }
 
 // Resets the current PairHeap
 func (p *PairHeap) Clear() {
-	p.Root = &PairHeapNode{}
+	p.root = &PairHeapNode{}
 }
 
 // Find the smallest item in the priority queue.
@@ -72,14 +72,14 @@ func (p *PairHeap) FindMin() go_heaps.Item {
 	if p.IsEmpty() {
 		return nil
 	}
-	return p.Root.Value
+	return p.root.Value
 }
 
 // Inserts the value to the PairHeap and returns the PairHeapNode
 // The complexity is O(1).
 func (p *PairHeap) Insert(v go_heaps.Item) *PairHeapNode {
 	n := PairHeapNode{Value: v, heap: p}
-	merge(&p.Root, &n)
+	merge(&p.root, &n)
 	return &n
 }
 
@@ -89,7 +89,7 @@ func (p *PairHeap) DeleteMin() interface{} {
 	if p.IsEmpty() {
 		return nil
 	}
-	result := mergePairs(&p.Root, p.Root.children)
+	result := mergePairs(&p.root, p.root.children)
 	return result.Value
 }
 
@@ -100,13 +100,13 @@ func (p *PairHeap) Adjust(node *PairHeapNode, v go_heaps.Item) *PairHeapNode {
 		return nil
 	}
 
-	if node == p.Root {
+	if node == p.root {
 		p.DeleteMin()
 		return p.Insert(v)
 	} else {
 		children := node.detach()
 		node.Value = v
-		mergePairs(&p.Root, append(p.Root.children, append([]*PairHeapNode{node}, children...)...))
+		mergePairs(&p.root, append(p.root.children, append([]*PairHeapNode{node}, children...)...))
 		return node
 	}
 }
@@ -117,11 +117,11 @@ func (p *PairHeap) Delete(node *PairHeapNode) interface{} {
 	if node == nil || node.heap != p {
 		return nil
 	}
-	if node == p.Root {
+	if node == p.root {
 		p.DeleteMin()
 	} else {
 		children := node.detach()
-		mergePairs(&p.Root, append(p.Root.children, children...))
+		mergePairs(&p.root, append(p.root.children, children...))
 	}
 	return node.Value
 }
@@ -133,9 +133,9 @@ func (p *PairHeap) Do(cb func(v interface{})) {
 		return
 	}
 	// Call root first
-	cb(p.Root.Value)
+	cb(p.root.Value)
 	// Then continue to children
-	visitChildren(p.Root.children, cb)
+	visitChildren(p.root.children, cb)
 }
 
 // Exhausting search of the element that matches v. Returns it as a PairHeapNode
@@ -145,10 +145,10 @@ func (p *PairHeap) Find(v go_heaps.Item) *PairHeapNode {
 		return nil
 	}
 
-	if  p.Root.Value.Compare(v) == 0 {
-		return p.Root
+	if  p.root.Value.Compare(v) == 0 {
+		return p.root
 	} else {
-		return p.findInChildren(p.Root.children, v)
+		return p.findInChildren(p.root.children, v)
 	}
 }
 
