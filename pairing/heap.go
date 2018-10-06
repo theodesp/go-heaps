@@ -230,12 +230,6 @@ func merge(first **PairHeapNode, second *PairHeapNode) *PairHeapNode {
 // Merges heaps together
 func mergePairs(root **PairHeapNode, heaps []*PairHeapNode) *PairHeapNode {
 	q := *root
-	if len(heaps) == 0 {
-		*root = &PairHeapNode{
-			parent: nil,
-		}
-		return q
-	}
 	if len(heaps) == 1 {
 		*root = heaps[0]
 		heaps[0].parent = nil
