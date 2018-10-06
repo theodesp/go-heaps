@@ -12,21 +12,20 @@ import (
 // PairHeap is an implementation of a Pairing Heap.
 // The zero value for PairHeap Root is an empty Heap.
 type PairHeap struct {
-	root       *PairHeapNode
+	root       *node
 }
 
-// PairHeapNode contains the current Value and the list if the sub-heaps
-type PairHeapNode struct {
+// node contains the current item and the list if the sub-heaps
+type node struct {
 	// for use by client; untouched by this library
-	Value heap.Item
-	// List of children PairHeapNodes all containing values less than the Top of the heap
-	children []*PairHeapNode
+	item heap.Item
+	// List of children nodes all containing values less than the Top of the heap
+	children []*node
 	// A reference to the parent Heap Node
-	parent *PairHeapNode
-	heap   *PairHeap // The heap to which this node belongs.
+	parent *node
 }
 
-func (n *PairHeapNode) detach() []*PairHeapNode {
+func (n *node) detach() []*node {
 	if n.parent == nil {
 		return nil // avoid detaching root
 	}
@@ -45,9 +44,32 @@ func (n *PairHeapNode) detach() []*PairHeapNode {
 	return n.children
 }
 
+func (n *node) findNode(item heap.Item) *node {
+	if n.item.Compare(item) == 0 {
+		return n
+	} else {
+		return n.findInChildren(n.children, item)
+	}
+}
+
+func (n *node) findInChildren(children []*node, item heap.Item) *node {
+	if len(children) == 0 {
+		return nil
+	}
+	var node *node
+loop:
+	for _, child := range children {
+		node = child.findNode(item)
+		if node != nil {
+			break loop
+		}
+	}
+	return node
+}
+
 // Init initializes or clears the PairHeap
 func (p *PairHeap) Init() *PairHeap {
-	p.root = &PairHeapNode{}
+	p.root = &node{}
 	return p
 }
 
@@ -57,12 +79,12 @@ func New() *PairHeap { return new(PairHeap).Init() }
 // IsEmpty returns true if PairHeap p is empty.
 // The complexity is O(1).
 func (p *PairHeap) IsEmpty() bool {
-	return p.root.Value == nil
+	return p.root.item == nil
 }
 
 // Resets the current PairHeap
 func (p *PairHeap) Clear() {
-	p.root = &PairHeapNode{}
+	p.root = &node{}
 }
 
 // Find the smallest item in the priority queue.
@@ -71,15 +93,15 @@ func (p *PairHeap) FindMin() heap.Item {
 	if p.IsEmpty() {
 		return nil
 	}
-	return p.root.Value
+	return p.root.item
 }
 
-// Inserts the value to the PairHeap and returns the Value
+// Inserts the value to the PairHeap and returns the item
 // The complexity is O(1).
 func (p *PairHeap) Insert(v heap.Item) heap.Item {
-	n := PairHeapNode{Value: v, heap: p}
+	n := node{item: v}
 	merge(&p.root, &n)
-	return n.Value
+	return n.item
 }
 
 
@@ -97,25 +119,25 @@ func (p *PairHeap) DeleteMin() heap.Item {
 	return p.deleteItem(nil, removeMin)
 }
 
-// Deletes a PairHeapNode from the heap and returns the Value
+// Deletes a node from the heap and returns the item
 // The complexity is O(log n) amortized.
 func (p *PairHeap) Delete(item heap.Item) heap.Item {
 	return p.deleteItem(item, removeItem)
 }
 
 func (p *PairHeap) deleteItem(item heap.Item, typ toDelete) heap.Item {
-	var result PairHeapNode
+	var result node
 
 	switch typ {
 	case removeMin:
 		if len(p.root.children) == 0 {
 			result = *p.root
-			p.root.Value = nil
+			p.root.item = nil
 		} else {
 			result = *mergePairs(&p.root, p.root.children)
 		}
 	case removeItem:
-		node := p.Find(item)
+		node := p.root.findNode(item)
 		if node == nil {
 			return nil
 		} else {
@@ -125,25 +147,25 @@ func (p *PairHeap) deleteItem(item heap.Item, typ toDelete) heap.Item {
 	default:
 		panic("invalid type")
 	}
-	return result.Value
+	return result.item
 }
 
-// Adjusts the value to the PairHeapNode Value and returns it
+// Adjusts the value to the node item and returns it
 // The complexity is O(n) amortized.
 func (p *PairHeap) Adjust(item heap.Item, new heap.Item) heap.Item {
-	node := p.Find(item)
-	if node == nil {
+	n := p.root.findNode(item)
+	if n == nil {
 		return nil
 	}
 
-	if node == p.root {
+	if n == p.root {
 		p.DeleteMin()
 		return p.Insert(new)
 	} else {
-		children := node.detach()
-		node.Value = new
-		mergePairs(&p.root, append(p.root.children, append([]*PairHeapNode{node}, children...)...))
-		return node.Value
+		children := n.detach()
+		n.item = new
+		mergePairs(&p.root, append(p.root.children, append([]*node{n}, children...)...))
+		return n.item
 	}
 }
 
@@ -154,73 +176,51 @@ func (p *PairHeap) Do(cb func(item heap.Item)) {
 		return
 	}
 	// Call root first
-	cb(p.root.Value)
+	cb(p.root.item)
 	// Then continue to children
 	visitChildren(p.root.children, cb)
 }
 
-// Exhausting search of the element that matches v. Returns it as a PairHeapNode
+// Exhausting search of the element that matches item and returns it
 // The complexity is O(n) amortized.
-func (p *PairHeap) Find(v heap.Item) *PairHeapNode {
+func (p *PairHeap) Find(item heap.Item) heap.Item {
 	if p.IsEmpty() {
 		return nil
 	}
-
-	if  p.root.Value.Compare(v) == 0 {
-		return p.root
-	} else {
-		return p.findInChildren(p.root.children, v)
-	}
-}
-
-func (p *PairHeap) findInChildren(children []*PairHeapNode, v heap.Item) *PairHeapNode {
-	if len(children) == 0 {
+	node := p.root.findNode(item)
+	if node == nil {
 		return nil
+	} else {
+		return node.item
 	}
-	var node *PairHeapNode
-loop:
-	for _, heapNode := range children {
-		cmp := heapNode.Value.Compare(v)
-		switch {
-		case cmp == 0: // found
-			node = heapNode
-			break loop
-		default:
-			node = p.findInChildren(heapNode.children, v)
-			if node != nil {
-				break loop
-			}
-		}
-	}
-	return node
 }
 
-func visitChildren(children []*PairHeapNode, cb func(item heap.Item)) {
+func visitChildren(children []*node, cb func(item heap.Item)) {
 	if len(children) == 0 {
 		return
 	}
 	for _, heapNode := range children {
-		cb(heapNode.Value)
+		cb(heapNode.item)
 		visitChildren(heapNode.children, cb)
 	}
 }
 
-func merge(first **PairHeapNode, second *PairHeapNode) *PairHeapNode {
+func merge(first **node, second *node) *node {
 	q := *first
-	if q.Value == nil { // Case when root is empty
+	if q.item == nil { // Case when root is empty
 		*first = second
 		return *first
 	}
 
-	cmp := q.Value.Compare(second.Value)
+	cmp := q.item.Compare(second.item)
 	if cmp < 0 {
 		// put 'second' as the first child of 'first' and update the parent
-		q.children = append([]*PairHeapNode{second}, q.children...)
+		q.children = append([]*node{second}, q.children...)
 		second.parent = *first
 		return *first
 	} else {
 		// put 'first' as the first child of 'second' and update the parent
-		second.children = append([]*PairHeapNode{q}, second.children...)
+		second.children = append([]*node{q}, second.children...)
 		q.parent = second
 		*first = second
 		return second
@@ -228,14 +228,14 @@ func merge(first **PairHeapNode, second *PairHeapNode) *PairHeapNode {
 }
 
 // Merges heaps together
-func mergePairs(root **PairHeapNode, heaps []*PairHeapNode) *PairHeapNode {
+func mergePairs(root **node, heaps []*node) *node {
 	q := *root
 	if len(heaps) == 1 {
 		*root = heaps[0]
 		heaps[0].parent = nil
 		return q
 	}
-	var merged *PairHeapNode
+	var merged *node
 	for { // iteratively merge heaps
 		if len(heaps) == 0 {
 			break

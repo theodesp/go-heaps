@@ -63,14 +63,14 @@ func (suite *PairingHeapTestSuite) TestInsert() {
 }
 
 func (suite *PairingHeapTestSuite) TestFind() {
-	node := suite.heap.Find(Int(10))
-	assert.Nil(suite.T(), node)
+	item := suite.heap.Find(Int(10))
+	assert.Nil(suite.T(), item)
 
 	suite.heap.Insert(Int(4))
 
-	node = suite.heap.Find(Int(4))
-	assert.NotNil(suite.T(),node)
-	assert.Equal(suite.T(),node.Value, Int(4))
+	item = suite.heap.Find(Int(4))
+	assert.NotNil(suite.T(),item)
+	assert.Equal(suite.T(),item, Int(4))
 
 	suite.heap.Insert(Int(8))
 	suite.heap.Insert(Int(2))
@@ -78,9 +78,9 @@ func (suite *PairingHeapTestSuite) TestFind() {
 	suite.heap.Insert(Int(3))
 	suite.heap.Insert(Int(9))
 
-	node = suite.heap.Find(Int(9))
-	assert.NotNil(suite.T(),node)
-	assert.Equal(suite.T(),node.Value, Int(9))
+	item = suite.heap.Find(Int(9))
+	assert.NotNil(suite.T(),item)
+	assert.Equal(suite.T(),item, Int(9))
 }
 
 func (suite *PairingHeapTestSuite) TestAdjust() {
