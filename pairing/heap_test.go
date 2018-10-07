@@ -4,7 +4,10 @@ import (
 	"testing"
 	"github.com/stretchr/testify/suite"
 	"github.com/stretchr/testify/assert"
-	"github.com/theodesp/go-heaps"
+	heap "github.com/theodesp/go-heaps"
+	"fmt"
+	"math/rand"
+	"time"
 )
 
 type PairingHeapTestSuite struct {
@@ -18,6 +21,45 @@ func (suite *PairingHeapTestSuite) SetupTest() {
 
 func TestExampleTestSuite(t *testing.T) {
 	suite.Run(t, new(PairingHeapTestSuite))
+}
+
+func init() {
+	seed := time.Now().Unix()
+	fmt.Println(seed)
+	rand.Seed(seed)
+}
+
+// perm returns a random permutation of n Int items in the range [0, n).
+func perm(n int) (out []heap.Item) {
+	for _, v := range rand.Perm(n) {
+		out = append(out, Int(v))
+	}
+	return
+}
+
+// rang returns an ordered list of Int items in the range [0, n).
+func rang(n int) (out []heap.Item) {
+	for i := 0; i < n; i++ {
+		out = append(out, Int(i))
+	}
+	return
+}
+
+// all extracts all items from a tree in order as a slice.
+func all(t *PairHeap) (out []heap.Item) {
+	t.Do(func(a heap.Item) {
+		out = append(out, a)
+		return
+	})
+	return
+}
+
+// rangerev returns a reversed ordered list of Int items in the range [0, n).
+func rangrev(n int) (out []heap.Item) {
+	for i := n - 1; i >= 0; i-- {
+		out = append(out, Int(i))
+	}
+	return
 }
 
 func (suite *PairingHeapTestSuite) TestIsEmpty() {
@@ -39,27 +81,26 @@ func (suite *PairingHeapTestSuite) TestFindMin() {
 }
 
 func (suite *PairingHeapTestSuite) TestDeleteMin() {
-	suite.heap.Insert(Int(4))
-	suite.heap.Insert(Int(8))
-	suite.heap.Insert(Int(6))
-	suite.heap.Insert(Int(3))
-
-	assert.Equal(suite.T(), suite.heap.DeleteMin(), Int(3))
-	assert.Equal(suite.T(), suite.heap.DeleteMin(), Int(4))
-	assert.Equal(suite.T(), suite.heap.DeleteMin(), Int(6))
-	assert.Equal(suite.T(), suite.heap.DeleteMin(), Int(8))
-	assert.Nil(suite.T(), suite.heap.DeleteMin())
+	for _, v := range perm(100) {
+		suite.heap.Insert(v)
+	}
+	var got []heap.Item
+	for v := suite.heap.DeleteMin(); v != nil; v = suite.heap.DeleteMin() {
+		got = append(got, v)
+	}
+	assert.ElementsMatch(suite.T(), got, rang(100))
 }
 
 func (suite *PairingHeapTestSuite) TestInsert() {
-	n1 := suite.heap.Insert(Int(4))
-	assert.Equal(suite.T(), n1, suite.heap.FindMin())
+	for _, item := range perm(100) {
+		suite.heap.Insert(item)
+	}
+	min := suite.heap.FindMin()
+	assert.Equal(suite.T(), min, Int(0))
 
-	n2 := suite.heap.Insert(Int(6))
-	assert.NotEqual(suite.T(), n2, suite.heap.FindMin())
-
-	n3 := suite.heap.DeleteMin()
-	assert.NotEqual(suite.T(), n3, suite.heap.FindMin())
+	got := all(suite.heap)
+	want := rang(100)
+	assert.ElementsMatch(suite.T(), got, want)
 }
 
 func (suite *PairingHeapTestSuite) TestFind() {
@@ -104,22 +145,16 @@ func (suite *PairingHeapTestSuite) TestAdjust() {
 }
 
 func (suite *PairingHeapTestSuite) TestDelete() {
-	suite.heap.Insert(Int(4))
-	suite.heap.Insert(Int(8))
-	suite.heap.Insert(Int(2))
-	suite.heap.Insert(Int(5))
-	suite.heap.Insert(Int(3))
-	suite.heap.Insert(Int(9))
+	for _, v := range rang(100) {
+		suite.heap.Insert(v)
+	}
+	for _, item := range rangrev(100) {
+		assert.NotNil(suite.T(), suite.heap.Delete(item))
+	}
 
-	assert.Nil(suite.T(), suite.heap.Delete(Int(10)))
-	assert.NotNil(suite.T(), suite.heap.Delete(Int(4)))
-	assert.Nil(suite.T(), suite.heap.Find(Int(4)))
-	assert.NotNil(suite.T(), suite.heap.Find(Int(8)))
-	assert.NotNil(suite.T(), suite.heap.Find(Int(5)))
-	assert.NotNil(suite.T(), suite.heap.Find(Int(3)))
-	assert.NotNil(suite.T(), suite.heap.Find(Int(9)))
+	assert.Nil(suite.T(), suite.heap.DeleteMin())
 }
 
-func Int(value int) go_heaps.Integer {
-	return go_heaps.Integer(value)
+func Int(value int) heap.Integer {
+	return heap.Integer(value)
 }

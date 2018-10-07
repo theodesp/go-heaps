@@ -128,25 +128,26 @@ func (p *PairHeap) Delete(item heap.Item) heap.Item {
 func (p *PairHeap) deleteItem(item heap.Item, typ toDelete) heap.Item {
 	var result node
 
-	switch typ {
-	case removeMin:
-		if len(p.root.children) == 0 {
-			result = *p.root
-			p.root.item = nil
-		} else {
+	if len(p.root.children) == 0 {
+		result = *p.root
+		p.root.item = nil
+	} else {
+		switch typ {
+		case removeMin:
 			result = *mergePairs(&p.root, p.root.children)
+		case removeItem:
+			node := p.root.findNode(item)
+			if node == nil {
+				return nil
+			} else {
+				children := node.detach()
+				result = *mergePairs(&p.root, append(p.root.children, children...))
+			}
+		default:
+			panic("invalid type")
 		}
-	case removeItem:
-		node := p.root.findNode(item)
-		if node == nil {
-			return nil
-		} else {
-			children := node.detach()
-			result = *mergePairs(&p.root, append(p.root.children, children...))
-		}
-	default:
-		panic("invalid type")
 	}
+
 	return result.item
 }
 
