@@ -187,11 +187,10 @@ func (p *PairHeap) Find(item heap.Item) heap.Item {
 	if p.IsEmpty() {
 		return nil
 	}
-	node := p.root.findNode(item)
-	if node == nil {
-		return nil
-	} else {
+	if node := p.root.findNode(item); node != nil {
 		return node.item
+	} else {
+		return nil
 	}
 }
 
