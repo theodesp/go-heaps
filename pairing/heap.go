@@ -141,7 +141,8 @@ func (p *PairHeap) deleteItem(item heap.Item, typ toDelete) heap.Item {
 				return nil
 			} else {
 				children := node.detach()
-				result = *mergePairs(&p.root, append(p.root.children, children...))
+				p.root.children = append(p.root.children, children...)
+				result = *node
 			}
 		default:
 			panic("invalid type")

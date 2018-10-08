@@ -145,10 +145,10 @@ func (suite *PairingHeapTestSuite) TestAdjust() {
 }
 
 func (suite *PairingHeapTestSuite) TestDelete() {
-	for _, v := range rang(100) {
+	for _, v := range rang(10) {
 		suite.heap.Insert(v)
 	}
-	for _, item := range rangrev(100) {
+	for _, item := range rangrev(10) {
 		assert.NotNil(suite.T(), suite.heap.Delete(item))
 	}
 
