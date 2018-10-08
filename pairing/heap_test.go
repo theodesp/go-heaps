@@ -47,9 +47,9 @@ func rang(n int) (out []heap.Item) {
 
 // all extracts all items from a tree in order as a slice.
 func all(t *PairHeap) (out []heap.Item) {
-	t.Do(func(a heap.Item) {
+	t.Do(func(a heap.Item) bool {
 		out = append(out, a)
-		return
+		return true
 	})
 	return
 }

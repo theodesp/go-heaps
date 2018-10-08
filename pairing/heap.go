@@ -44,6 +44,25 @@ func (n *node) detach() []*node {
 	return n.children
 }
 
+func (n *node) iterItem(iter ItemIterator) {
+	if !iter(n.item) {
+		return
+	}
+	n.iterChildren(n.children, iter)
+}
+
+func (n *node) iterChildren(children []*node, iter ItemIterator) {
+	if len(children) == 0 {
+		return
+	}
+	for _, node := range children {
+		if !iter(node.item) {
+			return
+		}
+		n.iterChildren(node.children, iter)
+	}
+}
+
 func (n *node) findNode(item heap.Item) *node {
 	if n.item.Compare(item) == 0 {
 		return n
@@ -173,39 +192,36 @@ func (p *PairHeap) Adjust(item heap.Item, new heap.Item) heap.Item {
 	}
 }
 
-// Do calls function cb on each element of the PairingHeap, in order of appearance.
-// The behavior of Do is undefined if cb changes *p.
-func (p *PairHeap) Do(cb func(item heap.Item)) {
-	if p.IsEmpty() {
-		return
-	}
-	// Call root first
-	cb(p.root.item)
-	// Then continue to children
-	visitChildren(p.root.children, cb)
-}
-
 // Exhausting search of the element that matches item and returns it
 // The complexity is O(n) amortized.
 func (p *PairHeap) Find(item heap.Item) heap.Item {
 	if p.IsEmpty() {
 		return nil
 	}
-	if node := p.root.findNode(item); node != nil {
-		return node.item
-	} else {
-		return nil
-	}
+	var found heap.Item
+	p.root.iterItem(func(i heap.Item) bool {
+		if item.Compare(i) == 0 {
+			found = i
+			return false
+		} else {
+			return true
+		}
+	})
+	return found
 }
 
-func visitChildren(children []*node, cb func(item heap.Item)) {
-	if len(children) == 0 {
+// ItemIterator allows callers of Do to iterate in-order over portions of
+// the tree.  When this function returns false, iteration will stop and the
+// function will immediately return.
+type ItemIterator func(i heap.Item) bool
+
+// Do calls function cb on each element of the PairingHeap, in order of appearance.
+// The behavior of Do is undefined if cb changes *p.
+func (p *PairHeap) Do(iter ItemIterator) {
+	if p.IsEmpty() {
 		return
 	}
-	for _, heapNode := range children {
-		cb(heapNode.item)
-		visitChildren(heapNode.children, cb)
-	}
+	p.root.iterItem(iter)
 }
 
 func merge(first **node, second *node) *node {
