@@ -78,15 +78,23 @@ func (fh *Heap) Union(fh2 *Heap) *Heap {
 func (fh *Heap) ExtractMin() *Node {
 	z := fh.Min
 	if z != nil {
-		if c := z.child; c != nil {
-			fmt.Println("childs ", c.Value)
-			c.parent = nil
-			for r := c.right; r != c; r = r.right {
-				fmt.Println("childs ", r.Value)
-				r.parent = nil
+		for {
+			if c := z.child; c != nil {
+				c.parent = nil
+				if c.right != c {
+					z.child = c.right
+					c.right.left = c.left
+					c.left.right = c.right
+				} else {
+					z.child = nil
+				}
+				c.left = z.left
+				c.right = z
+				z.left.right = c
+				z.left = c
+			} else {
+				break
 			}
-
-			return z
 		}
 
 		z.left.right = z.right
