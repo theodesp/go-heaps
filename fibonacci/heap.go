@@ -10,9 +10,8 @@ import (
 
 // Heap is a implementation of Fibonacci heap.
 type Heap struct {
-	Min     *Node
-	N       int
-	maxRank int
+	Min *Node
+	N   int
 }
 
 // Node holds structure of nodes inside Fibonacci heap.
@@ -65,8 +64,7 @@ func (fh *Heap) Union(fh2 *Heap) *Heap {
 
 	newFH.Min.left.right = fh2.Min
 	fh2.Min.left.right = newFH.Min
-	fh2.Min.left = newFH.Min.left
-	newFH.Min.left = fh2.Min.left
+	fh2.Min.left, newFH.Min.left = newFH.Min.left, fh2.Min.left
 
 	if fh.Min == nil || (fh2.Min != nil && fh.Min.Value.Compare(fh2.Min.Value) > 0) {
 		newFH.Min = fh2.Min
@@ -82,10 +80,10 @@ func (fh *Heap) ExtractMin() *Node {
 	if z != nil {
 		if c := z.child; c != nil {
 			c.parent = nil
-			fh.addRoot(c)
+			addNode(fh.Min, c)
 			for r := c.right; r != c; r = r.right {
 				r.parent = nil
-				fh.addRoot(r)
+				addNode(fh.Min, r)
 			}
 		}
 
@@ -104,7 +102,7 @@ func (fh *Heap) ExtractMin() *Node {
 }
 
 func (fh *Heap) consolidate() {
-	var degArr [10]*Node
+	degreeToRoot := make(map[int]*Node)
 	flag := false
 	w := fh.Min
 	for {
@@ -115,38 +113,35 @@ func (fh *Heap) consolidate() {
 				break
 			}
 		}
-		r := w.right
+		r := w.left
 		x := w
 		d := x.degree
-		for degArr[d] != nil {
-			y := degArr[d]
-			if x.Value.Compare(y.Value) > 0 {
-				xl := x.left
-				xr := x.right
-
-				x.left = y.left
-				x.right = y.right
-				y.left = xl
-				y.right = xr
+		for {
+			if y, ok := degreeToRoot[d]; !ok {
+				break
+			} else {
+				if y.Value.Compare(x.Value) < 0 {
+					y.left, y.right, x.left, x.right = x.left, x.right, y.left, y.right
+				}
+				fh.link(y, x)
+				delete(degreeToRoot, d)
+				d++
 			}
-			fh.link(y, x)
-			degArr[d] = nil
-			d++
 		}
-		degArr[d] = x
+		degreeToRoot[d] = x
 		w = r
 	}
-	fh.Min = nil
-	for i := 0; i < fh.maxRank; i++ {
-		if degArr[i] != nil {
-			fh.addRoot(degArr[i])
-		}
+	fh.Min = w
+	for k, v := range degreeToRoot {
+		fmt.Println("k ", k, " v ", v.Value)
+		fh.addRoot(v)
 	}
 }
 
 func (fh *Heap) link(y, x *Node) {
 	if y.parent != nil {
 		fmt.Println("node to link, cannot have a parent")
+		fmt.Println(" y ", y.Value, "\n y parent ", y.parent.Value)
 	}
 
 	y.right.left = y.left
@@ -165,7 +160,6 @@ func (fh *Heap) link(y, x *Node) {
 		x.child.left = y
 	}
 
-	fh.maxRank++
 	y.mark = false
 }
 
