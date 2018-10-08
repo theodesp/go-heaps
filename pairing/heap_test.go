@@ -125,23 +125,30 @@ func (suite *PairingHeapTestSuite) TestFind() {
 }
 
 func (suite *PairingHeapTestSuite) TestAdjust() {
-	suite.heap.Insert(Int(4))
-	suite.heap.Insert(Int(8))
-	suite.heap.Insert(Int(2))
-	suite.heap.Insert(Int(5))
-	suite.heap.Insert(Int(3))
-	suite.heap.Insert(Int(9))
-
-	root := Int(2)
-	assert.NotNil(suite.T(), suite.heap.Adjust(Int(2), Int(10)))
-	assert.NotEqual(suite.T(), suite.heap.FindMin(), root)
-	assert.NotNil(suite.T(), suite.heap.Find(Int(10)))
-	assert.NotNil(suite.T(), suite.heap.Find(Int(9)))
-
-	assert.Nil(suite.T(), suite.heap.Adjust(Int(2), Int(5)))
-	assert.NotNil(suite.T(), suite.heap.Adjust(Int(10), Int(13)))
-	assert.NotNil(suite.T(), suite.heap.Adjust(Int(9), Int(5)))
-	assert.NotNil(suite.T(), suite.heap.Find(Int(13)))
+	for _, v := range rang(10) {
+		suite.heap.Insert(v)
+	}
+	for i, item := range rangrev(10) {
+		assert.NotNil(suite.T(), suite.heap.Adjust(item, Int(i)))
+	}
+	//assert.Nil(suite.T(), suite.heap.DeleteMin())
+	//suite.heap.Insert(Int(4))
+	//suite.heap.Insert(Int(8))
+	//suite.heap.Insert(Int(2))
+	//suite.heap.Insert(Int(5))
+	//suite.heap.Insert(Int(3))
+	//suite.heap.Insert(Int(9))
+	//
+	//root := Int(2)
+	//assert.NotNil(suite.T(), suite.heap.Adjust(Int(2), Int(10)))
+	//assert.NotEqual(suite.T(), suite.heap.FindMin(), root)
+	//assert.NotNil(suite.T(), suite.heap.Find(Int(10)))
+	//assert.NotNil(suite.T(), suite.heap.Find(Int(9)))
+	//
+	//assert.Nil(suite.T(), suite.heap.Adjust(Int(2), Int(5)))
+	//assert.NotNil(suite.T(), suite.heap.Adjust(Int(10), Int(13)))
+	//assert.NotNil(suite.T(), suite.heap.Adjust(Int(9), Int(5)))
+	//assert.NotNil(suite.T(), suite.heap.Find(Int(13)))
 }
 
 func (suite *PairingHeapTestSuite) TestDelete() {

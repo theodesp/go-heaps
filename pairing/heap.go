@@ -30,7 +30,7 @@ func (n *node) detach() []*node {
 		return nil // avoid detaching root
 	}
 	for _, node := range n.children {
-		node.parent = n.parent
+		node.parent = nil
 	}
 	var idx int
 	for i, node := range n.parent.children {
@@ -165,8 +165,10 @@ func (p *PairHeap) Adjust(item heap.Item, new heap.Item) heap.Item {
 		return p.Insert(new)
 	} else {
 		children := n.detach()
-		n.item = new
-		mergePairs(&p.root, append(p.root.children, append([]*node{n}, children...)...))
+		p.Insert(new)
+		for _, node := range children {
+			p.Insert(node.item)
+		}
 		return n.item
 	}
 }
