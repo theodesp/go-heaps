@@ -79,13 +79,14 @@ func (fh *Heap) ExtractMin() *Node {
 	z := fh.Min
 	if z != nil {
 		if c := z.child; c != nil {
+			fmt.Println("childs ", c.Value)
 			c.parent = nil
-			addNode(fh.Min, c)
 			for r := c.right; r != c; r = r.right {
-				fmt.Println("aa")
+				fmt.Println("childs ", r.Value)
 				r.parent = nil
-				addNode(fh.Min, r)
 			}
+
+			return z
 		}
 
 		z.left.right = z.right
@@ -114,7 +115,7 @@ func (fh *Heap) consolidate() {
 				break
 			}
 		}
-		r := w.left
+		r := w.right
 		x := w
 		d := x.degree
 		for {
