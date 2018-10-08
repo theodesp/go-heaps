@@ -82,6 +82,7 @@ func (fh *Heap) ExtractMin() *Node {
 			c.parent = nil
 			addNode(fh.Min, c)
 			for r := c.right; r != c; r = r.right {
+				fmt.Println("aa")
 				r.parent = nil
 				addNode(fh.Min, r)
 			}
@@ -121,7 +122,7 @@ func (fh *Heap) consolidate() {
 				break
 			} else {
 				if y.Value.Compare(x.Value) < 0 {
-					y.left, y.right, x.left, x.right = x.left, x.right, y.left, y.right
+					y, x = x, y
 				}
 				fh.link(y, x)
 				delete(degreeToRoot, d)
@@ -131,19 +132,13 @@ func (fh *Heap) consolidate() {
 		degreeToRoot[d] = x
 		w = r
 	}
-	fh.Min = w
-	for k, v := range degreeToRoot {
-		fmt.Println("k ", k, " v ", v.Value)
+	fh.Min = nil
+	for _, v := range degreeToRoot {
 		fh.addRoot(v)
 	}
 }
 
 func (fh *Heap) link(y, x *Node) {
-	if y.parent != nil {
-		fmt.Println("node to link, cannot have a parent")
-		fmt.Println(" y ", y.Value, "\n y parent ", y.parent.Value)
-	}
-
 	y.right.left = y.left
 	y.left.right = y.right
 
