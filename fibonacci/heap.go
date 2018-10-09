@@ -16,10 +16,28 @@ type Heap struct {
 
 // Node holds structure of nodes inside Fibonacci heap.
 type Node struct {
-	Value                      heap.Item
+	Key                        heap.Item
 	left, right, parent, child *Node
 	mark                       bool
 	degree                     int
+}
+
+func (fh *Heap) addRoot(x *Node) {
+	if fh.Min == nil {
+		// create fh's root list containing only x
+		x.left = x
+		x.right = x
+		fh.Min = x
+	} else {
+		// insert x to fh's root list
+		fh.Min.left.right = x
+		x.right = fh.Min
+		x.left = fh.Min.left
+		fh.Min.left = x
+		if x.Key.Compare(fh.Min.Key) < 0 {
+			fh.Min = x
+		}
+	}
 }
 
 // MakeHeap creates and returns a new, empty heap.
@@ -30,7 +48,7 @@ func MakeHeap() *Heap {
 	return &fh
 }
 
-// Insert inserts a new node, with predeclared value, to the heap.
+// Insert inserts a new node, with predeclared Key, to the heap.
 func (fh *Heap) Insert(x *Node) *Node {
 	x.degree = 0
 	x.mark = false
@@ -42,7 +60,7 @@ func (fh *Heap) Insert(x *Node) *Node {
 	return x
 }
 
-// Minimum returns pointer to the heap's node holding the minimum value.
+// Minimum returns pointer to the heap's node holding the minimum Key.
 func (fh *Heap) Minimum() *Node {
 	return fh.Min
 }
@@ -56,14 +74,14 @@ func (fh *Heap) Union(fh2 *Heap) *Heap {
 	fh2.Min.left.right = newFH.Min
 	fh2.Min.left, newFH.Min.left = newFH.Min.left, fh2.Min.left
 
-	if fh.Min == nil || (fh2.Min != nil && fh.Min.Value.Compare(fh2.Min.Value) > 0) {
+	if fh.Min == nil || (fh2.Min != nil && fh.Min.Key.Compare(fh2.Min.Key) > 0) {
 		newFH.Min = fh2.Min
 	}
 	newFH.N = fh.N + fh2.N
 	return newFH
 }
 
-// ExtractMin extracts the node with minimum value from a heap
+// ExtractMin extracts the node with minimum Key from a heap
 // and returns pointer to this node.
 func (fh *Heap) ExtractMin() *Node {
 	z := fh.Min
@@ -114,7 +132,7 @@ func (fh *Heap) consolidate() {
 			if y, ok := degreeToRoot[d]; !ok {
 				break
 			} else {
-				if y.Value.Compare(x.Value) < 0 {
+				if y.Key.Compare(x.Key) < 0 {
 					y, x = x, y
 				}
 				fh.link(y, x)
@@ -155,24 +173,6 @@ func (fh *Heap) link(y, x *Node) {
 	y.mark = false
 }
 
-func (fh *Heap) addRoot(x *Node) {
-	if fh.Min == nil {
-		// create fh's root list containing only x
-		x.left = x
-		x.right = x
-		fh.Min = x
-	} else {
-		// insert x to fh's root list
-		fh.Min.left.right = x
-		x.right = fh.Min
-		x.left = fh.Min.left
-		fh.Min.left = x
-		if x.Value.Compare(fh.Min.Value) < 0 {
-			fh.Min = x
-		}
-	}
-}
-
 // Vis visualize
 func (fh Heap) Vis() {
 	if fh.Min == nil {
@@ -190,9 +190,9 @@ func (fh Heap) Vis() {
 				pc = "  "
 			}
 			if x.child == nil {
-				fmt.Println("╴", x.Value)
+				fmt.Println("╴", x.Key)
 			} else {
-				fmt.Println("┐", x.Value)
+				fmt.Println("┐", x.Key)
 				f(x.child, pre+pc)
 			}
 			if x.right == n {
