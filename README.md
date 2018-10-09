@@ -30,7 +30,7 @@ $ go get -u github.com/theodesp/go-heaps
 
 * [Pairing Heap](https://en.wikipedia.org/wiki/Pairing_heap): A pairing heap is a type of heap data structure with relatively simple implementation and excellent practical amortized performance.
 * [Leftlist Heap](https://www.geeksforgeeks.org/leftist-tree-leftist-heap/): a variant of a binary heap. Every node has an s-value which is the distance to the nearest leaf. In contrast to a binary heap, a leftist tree attempts to be very unbalanced.
-
+* [Skew Heap](https://en.wikipedia.org/wiki/Skew_heap): A skew heap (or self-adjusting heap) is a heap data structure implemented as a binary tree. Skew heaps are advantageous because of their ability to merge more quickly than binary heaps.
 
 ## Usage
 
@@ -59,14 +59,14 @@ func main()  {
 ```
 
 ## Complexity
-| Operation     | Pairing       | Leftlist      |
-| ------------- |:-------------:|:-------------:|
-| FindMin       | Θ(1)          | Θ(1)          |
-| DeleteMin     | O(log n)      | O(log n)      |
-| Insert        | Θ(1)          | O(log n)      |
-| Find          | O(n)          |               |
-| Delete        | O(n)          |               |
-| Adjust        | O(n)          |               |
+| Operation     | Pairing       | Leftlist      | Skew          |
+| ------------- |:-------------:|:-------------:|:-------------:|
+| FindMin       | Θ(1)          | Θ(1)          | Θ(1)          |
+| DeleteMin     | O(log n)      | O(log n)      | O(log n)      |
+| Insert        | Θ(1)          | O(log n)      | O(log n)      |
+| Find          | O(n)          |               |               |
+| Delete        | O(n)          |               |               |
+| Adjust        | O(n)          |               |               |
 
 
 ## Contributors

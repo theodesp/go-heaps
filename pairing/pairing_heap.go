@@ -231,8 +231,7 @@ func merge(first **node, second *node) *node {
 		return *first
 	}
 
-	cmp := q.item.Compare(second.item)
-	if cmp < 0 {
+	if q.item.Compare(second.item) < 0 {
 		// put 'second' as the first child of 'first' and update the parent
 		q.children = append([]*node{second}, q.children...)
 		second.parent = *first

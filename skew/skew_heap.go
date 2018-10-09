@@ -1,4 +1,9 @@
-package skewheap
+// Package skew implements a Skew heap Data structure
+//
+// Structure is not thread safe.
+//
+// Reference: https://en.wikipedia.org/wiki/Skew_heap
+package skew
 
 import (
 	heap "github.com/theodesp/go-heaps"
@@ -33,6 +38,14 @@ func merge(x, y *Node) *Node {
 type SkewHeap struct {
 	Root *Node
 }
+
+// Init initializes or clears the SkewHeap
+func (s *SkewHeap) Init() *SkewHeap {
+	return &SkewHeap{}
+}
+
+// New returns an initialized SkewHeap.
+func New() *SkewHeap { return new(SkewHeap).Init() }
 
 // Insert adds an item into the heap.
 func (h *SkewHeap) Insert(v heap.Item) heap.Item {

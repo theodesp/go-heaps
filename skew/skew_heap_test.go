@@ -1,4 +1,9 @@
-package skewheap
+// Package pairing implements a Pairing heap Data structure
+//
+// Structure is not thread safe.
+//
+// Reference: https://en.wikipedia.org/wiki/Pairing_heap
+package skew
 
 import (
 	"sort"
