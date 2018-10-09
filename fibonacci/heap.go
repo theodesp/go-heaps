@@ -189,6 +189,26 @@ func (fh *Heap) DecreaseKey(x *Node, k heap.Item) {
 	}
 }
 
+func (fh *Heap) cut(x, y *Node) {
+	// remove x from y's children list and decrement y's degree
+	if x.right != x {
+		y.child = x.right
+		x.right.left = x.left
+		x.left.right = x.right
+	} else {
+		y.child = nil
+	}
+	y.degree--
+	// add x to fh's root list
+	x.left = fh.min.left
+	x.right = fh.min
+	fh.min.left.right = x
+	fh.min.left = x
+
+	x.parent = nil
+	x.mark = false
+}
+
 // Vis visualize
 func (fh Heap) Vis() {
 	if fh.min == nil {
