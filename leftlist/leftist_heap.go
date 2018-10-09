@@ -16,7 +16,7 @@ type LeftistHeap struct {
 	Root *Node
 }
 
-func (h *LeftistHeap) merge(x, y *Node) *Node {
+func merge(x, y *Node) *Node {
 	if x == nil {
 		return y
 	}
@@ -29,7 +29,7 @@ func (h *LeftistHeap) merge(x, y *Node) *Node {
 		x, y = y, x
 	}
 
-	x.Right = h.merge(x.Right, y)
+	x.Right = merge(x.Right, y)
 
 	if x.Left == nil {
 		// left child doesn't exist, so move right child to the left side
@@ -51,7 +51,7 @@ func (h *LeftistHeap) merge(x, y *Node) *Node {
 // Insert adds an item into the heap.
 // The complexity is O(log n) amortized.
 func (h *LeftistHeap) Insert(item heap.Item) heap.Item {
-	h.Root = h.merge(&Node{
+	h.Root = merge(&Node{
 		Item: item,
 	}, h.Root)
 
@@ -63,7 +63,7 @@ func (h *LeftistHeap) Insert(item heap.Item) heap.Item {
 func (h *LeftistHeap) DeleteMin() heap.Item {
 	item := h.Root.Item
 
-	h.Root = h.merge(h.Root.Left, h.Root.Right)
+	h.Root = merge(h.Root.Left, h.Root.Right)
 
 	return item
 }
