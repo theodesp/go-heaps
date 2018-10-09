@@ -40,7 +40,7 @@ type SkewHeap struct {
 }
 
 // Init initializes or clears the SkewHeap
-func (s *SkewHeap) Init() *SkewHeap {
+func (h *SkewHeap) Init() *SkewHeap {
 	return &SkewHeap{}
 }
 
