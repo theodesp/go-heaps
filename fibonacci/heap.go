@@ -113,25 +113,21 @@ func (fh *Heap) ExtractMin() *Node {
 
 func (fh *Heap) consolidate() {
 	degreeToRoot := make(map[int]*Node)
-	flag := false
 	w := fh.Min
+	last := w.left
 	for {
-		if w == fh.Min {
-			if !flag {
-				flag = true
-			} else {
-				break
-			}
-		}
-		r := w.right
-		x := w
-		d := x.degree
-		for {
-			if y, ok := degreeToRoot[d]; !ok {
-				break
-			} else {
-				if y.Value.Compare(x.Value) < 0 {
-					y, x = x, y
+		r := w.right                                         // wchodze dla 3 dla 3 nic nie zrobie wiec wstawie 3 do mapy
+		x := w                                               // wchodze dla 5 dla 5 wejde w if bo jest cos w mapie
+		d := x.degree                                        // w mapie jest 3 z 5 jako dziecko na 1 a na 0 nic nie ma
+		fmt.Println(" XXXX ", x.Value, " xr", x.right.Value) // wchdoze dla 9 podstawiam 9 pod 0 w mapie
+		for {                                                // wchodze dla 2 2 najpierw spotka 9 a pozniej 3 w mapie i jest zapisana na d:2 w mapie z dziecmi 3 i 9
+			if y, ok := degreeToRoot[d]; !ok { // wchodze dla 4 i wrzucam ja do mapy na 0
+				fmt.Println(" x ", x.Value, d, degreeToRoot) // wchodze dla 6 i patrze ze jest 4 na 0 wiec robie 6 dzieckiem 4
+				break                                        // w mapie jest 4 na 1 i 2 na 2
+			} else { // wchodze dla 8 i wstawiam ja na 0 w mapie
+				fmt.Println(" YYYY ", y.Value)    // TERAZ POWINIENEM SKONCZYC, 3 powinna byc kolejna po 8 ale jest 2 !!!
+				if y.Value.Compare(x.Value) < 0 { // 2 nie jest trojka wiec petla sie nie konczy tylko idzie dalej
+					y, x = x, y // czemu 8 ma wskaznik na 2 po prawej stronie ?
 				}
 				fh.link(y, x)
 				delete(degreeToRoot, d)
@@ -139,12 +135,17 @@ func (fh *Heap) consolidate() {
 			}
 		}
 		degreeToRoot[d] = x
+		if w == last {
+			break
+		}
 		w = r
 	}
+	fmt.Println("MAAAP", degreeToRoot)
 	fh.Min = nil
 	for _, v := range degreeToRoot {
 		fh.addRoot(v)
 	}
+
 }
 
 func (fh *Heap) link(y, x *Node) {
