@@ -16,7 +16,7 @@ type LeftistHeap struct {
 	Root *Node
 }
 
-func merge(x, y *Node) *Node {
+func mergeNodes(x, y *Node) *Node {
 	if x == nil {
 		return y
 	}
@@ -24,18 +24,21 @@ func merge(x, y *Node) *Node {
 	if y == nil {
 		return x
 	}
-
+	// Compare the roots of two heaps.
 	if x.Item.Compare(y.Item) == 1 {
-		x, y = y, x
+		return merge(y, x)
+	} else {
+		return merge(x, y)
 	}
+}
 
-	x.Right = merge(x.Right, y)
-
+func merge(x, y *Node) *Node {
 	if x.Left == nil {
 		// left child doesn't exist, so move right child to the left side
-		x.Left = x.Right
+		x.Left = y
 		x.Right = nil
 	} else {
+		x.Right = mergeNodes(x.Right, y)
 		// left child does exist, so compare s-values
 		if x.Left.s < x.Right.s {
 			x.Left, x.Right = x.Right, x.Left
@@ -51,7 +54,7 @@ func merge(x, y *Node) *Node {
 // Insert adds an item into the heap.
 // The complexity is O(log n) amortized.
 func (h *LeftistHeap) Insert(item heap.Item) heap.Item {
-	h.Root = merge(&Node{
+	h.Root = mergeNodes(&Node{
 		Item: item,
 	}, h.Root)
 
@@ -63,7 +66,7 @@ func (h *LeftistHeap) Insert(item heap.Item) heap.Item {
 func (h *LeftistHeap) DeleteMin() heap.Item {
 	item := h.Root.Item
 
-	h.Root = merge(h.Root.Left, h.Root.Right)
+	h.Root = mergeNodes(h.Root.Left, h.Root.Right)
 
 	return item
 }
