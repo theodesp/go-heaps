@@ -209,6 +209,18 @@ func (fh *Heap) cut(x, y *Node) {
 	x.mark = false
 }
 
+func (fh *Heap) cascadingCut(y *Node) {
+	z := y.parent
+	if z != nil {
+		if !y.mark {
+			y.mark = true
+		} else {
+			fh.cut(y, z)
+			fh.cascadingCut(z)
+		}
+	}
+}
+
 // Vis visualize
 func (fh Heap) Vis() {
 	if fh.min == nil {
