@@ -1,10 +1,10 @@
 // Package fibonacci implements a Fibonacci Heap Data structure
 // Reference: https://en.wikipedia.org/wiki/Fibonacci_heap
+// Implementation from Introduction to Algorithms by T. Cormen
 package fibonacci
 
 import (
 	"fmt"
-	"strings"
 
 	goheap "github.com/theodesp/go-heaps"
 )
@@ -21,16 +21,6 @@ type Node struct {
 	left, right, parent, child *Node
 	mark                       bool
 	degree                     int
-}
-
-// ToInt converts int to go-heap.Integer
-func ToInt(value int) goheap.Integer {
-	return goheap.Integer(value)
-}
-
-// ToString converts string to go-heap.String
-func ToString(value string) goheap.String {
-	return goheap.String(value)
 }
 
 func (fh *Heap) addRoot(x *Node) {
@@ -184,7 +174,7 @@ func (fh *Heap) link(y, x *Node) {
 	y.mark = false
 }
 
-// DecreaseKey decreases the key of given node
+// DecreaseKey decreases the key of given node.
 func (fh *Heap) DecreaseKey(x *Node, k goheap.Item) {
 	if x.Key.Compare(k) < 0 {
 		panic("new Key is greater than the previous one")
@@ -236,14 +226,20 @@ func (fh *Heap) cascadingCut(y *Node) {
 func (fh *Heap) Delete(x *Node) {
 	switch x.Key.(type) {
 	case goheap.Integer:
-		fh.DecreaseKey(x, goheap.Item(ToInt(-1<<63)))
+		fh.DecreaseKey(x, goheap.Item(goheap.Integer(-1<<63)))
 	case goheap.String:
-		fh.DecreaseKey(x, goheap.Item(ToString(strings.Repeat(" ", 64))))
+		fh.DecreaseKey(x, goheap.Item(goheap.String("")))
 	}
 	fh.ExtractMin()
 }
 
-// Vis visualize
+// Clear resets heap.
+func (fh *Heap) Clear() {
+	fh.N = 0
+	fh.min = &Node{}
+}
+
+// Vis visualizes the heap. All credits to "https://rosettacode.org/wiki/Fibonacci_heap"
 func (fh Heap) Vis() {
 	if fh.min == nil {
 		fmt.Println("<empty>")

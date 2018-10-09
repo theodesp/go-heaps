@@ -3,25 +3,26 @@ package main
 import (
 	"fmt"
 
-	"github.com/radlinskii/go-heaps/fibonacci"
+	"github.com/radlinskii/go-heaps/fibonacci" // after merging the pull request change it to "github.com/theodesp/go-heaps/fibonacci"
+	goheap "github.com/theodesp/go-heaps"
 )
 
 func main() {
 	heap1 := fibonacci.MakeHeap()
 	heap1.Vis()
-	heap1.Insert(&fibonacci.Node{Key: fibonacci.ToInt(4)})
-	heap1.Insert(&fibonacci.Node{Key: fibonacci.ToInt(6)})
-	heap1.Insert(&fibonacci.Node{Key: fibonacci.ToInt(20)})
-	heap1.Insert(&fibonacci.Node{Key: fibonacci.ToInt(1)})
+	heap1.Insert(&fibonacci.Node{Key: goheap.Item(goheap.Integer(4))})
+	heap1.Insert(&fibonacci.Node{Key: goheap.Item(goheap.Integer(6))})
+	heap1.Insert(&fibonacci.Node{Key: goheap.Item(goheap.Integer(20))})
+	heap1.Insert(&fibonacci.Node{Key: goheap.Item(goheap.Integer(1))})
 
 	heap2 := fibonacci.MakeHeap()
-	node := &fibonacci.Node{Key: fibonacci.ToInt(5)}
+	node := &fibonacci.Node{Key: goheap.Item(goheap.Integer(5))}
 	heap2.Insert(node)
-	heap2.Insert(&fibonacci.Node{Key: fibonacci.ToInt(3)})
-	node2 := &fibonacci.Node{Key: fibonacci.ToInt(8)}
+	heap2.Insert(&fibonacci.Node{Key: goheap.Item(goheap.Integer(3))})
+	node2 := &fibonacci.Node{Key: goheap.Item(goheap.Integer(8))}
 	heap2.Insert(node2)
-	heap2.Insert(&fibonacci.Node{Key: fibonacci.ToInt(7)})
-	heap2.Insert(&fibonacci.Node{Key: fibonacci.ToInt(10)})
+	heap2.Insert(&fibonacci.Node{Key: goheap.Item(goheap.Integer(7))})
+	heap2.Insert(&fibonacci.Node{Key: goheap.Item(goheap.Integer(10))})
 
 	fmt.Printf("heap1 - min: %v, n: %d\n", heap1.Minimum().Key, heap1.N)
 	heap1.Vis()
@@ -46,7 +47,7 @@ func main() {
 
 	heap3.Vis()
 
-	heap3.DecreaseKey(node, fibonacci.ToInt(2))
+	heap3.DecreaseKey(node, goheap.Item(goheap.Integer(2)))
 	fmt.Printf("heap3 - min: %v, n: %d\n", heap3.Minimum().Key, heap3.N)
 
 	heap3.Vis()
@@ -58,19 +59,19 @@ func main() {
 
 	heap4 := fibonacci.MakeHeap()
 	heap4.Vis()
-	heap4.Insert(&fibonacci.Node{Key: fibonacci.ToString("igi")})
-	heap4.Insert(&fibonacci.Node{Key: fibonacci.ToString("gigi")})
-	heap4.Insert(&fibonacci.Node{Key: fibonacci.ToString("zigi")})
-	heap4.Insert(&fibonacci.Node{Key: fibonacci.ToString("aga")})
+	heap4.Insert(&fibonacci.Node{Key: goheap.Item(goheap.String("igi"))})
+	heap4.Insert(&fibonacci.Node{Key: goheap.Item(goheap.String("gigi"))})
+	heap4.Insert(&fibonacci.Node{Key: goheap.Item(goheap.String("zigi"))})
+	heap4.Insert(&fibonacci.Node{Key: goheap.Item(goheap.String("aga"))})
 
 	heap5 := fibonacci.MakeHeap()
-	node3 := &fibonacci.Node{Key: fibonacci.ToString("iggi")}
+	node3 := &fibonacci.Node{Key: goheap.Item(goheap.String("iggi"))}
 	heap5.Insert(node3)
-	heap5.Insert(&fibonacci.Node{Key: fibonacci.ToString("agga")})
-	node4 := &fibonacci.Node{Key: fibonacci.ToString("agzi")}
+	heap5.Insert(&fibonacci.Node{Key: goheap.Item(goheap.String("agga"))})
+	node4 := &fibonacci.Node{Key: goheap.Item(goheap.String("agzi"))}
 	heap5.Insert(node4)
-	heap5.Insert(&fibonacci.Node{Key: fibonacci.ToString("iaga")})
-	heap5.Insert(&fibonacci.Node{Key: fibonacci.ToString("iga")})
+	heap5.Insert(&fibonacci.Node{Key: goheap.Item(goheap.String("iaga"))})
+	heap5.Insert(&fibonacci.Node{Key: goheap.Item(goheap.String("iga"))})
 
 	fmt.Printf("heap4 - min: %v, n: %d\n", heap4.Minimum().Key, heap4.N)
 	heap4.Vis()
@@ -95,7 +96,7 @@ func main() {
 
 	heap6.Vis()
 
-	heap6.DecreaseKey(node3, fibonacci.ToString("agu"))
+	heap6.DecreaseKey(node3, goheap.Item(goheap.String("agu")))
 	fmt.Printf("heap6 - min: %v, n: %d\n", heap6.Minimum().Key, heap6.N)
 
 	heap6.Vis()
