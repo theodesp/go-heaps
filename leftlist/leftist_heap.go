@@ -34,7 +34,7 @@ func mergeNodes(x, y *Node) *Node {
 
 func merge(x, y *Node) *Node {
 	if x.Left == nil {
-		// left child doesn't exist, so move right child to the left side
+		// left child doesn't exist, so move right child to the smallest key
 		x.Left = y
 		x.Right = nil
 	} else {
@@ -50,6 +50,14 @@ func merge(x, y *Node) *Node {
 
 	return x
 }
+
+// Init initializes or clears the LeftistHeap
+func (h *LeftistHeap) Init() *LeftistHeap {
+	return &LeftistHeap{}
+}
+
+// New returns an initialized LeftistHeap.
+func New() *LeftistHeap { return new(LeftistHeap).Init() }
 
 // Insert adds an item into the heap.
 // The complexity is O(log n) amortized.
