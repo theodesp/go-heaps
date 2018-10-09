@@ -10,12 +10,7 @@ type Node struct {
 	Right, Left *Node
 }
 
-// SkewHeap is a skew heap implementation.
-type SkewHeap struct {
-	Root *Node
-}
-
-func (h *SkewHeap) merge(x, y *Node) *Node {
+func merge(x, y *Node) *Node {
 	if x == nil {
 		return y
 	}
@@ -29,14 +24,19 @@ func (h *SkewHeap) merge(x, y *Node) *Node {
 	}
 
 	x.Left, x.Right = x.Right, x.Left
-	x.Left = h.merge(y, x.Left)
+	x.Left = merge(y, x.Left)
 
 	return x
 }
 
+// SkewHeap is a skew heap implementation.
+type SkewHeap struct {
+	Root *Node
+}
+
 // Insert adds an item into the heap.
 func (h *SkewHeap) Insert(v heap.Item) heap.Item {
-	h.Root = h.merge(&Node{
+	h.Root = merge(&Node{
 		Item: v,
 	}, h.Root)
 
@@ -47,7 +47,7 @@ func (h *SkewHeap) Insert(v heap.Item) heap.Item {
 func (h *SkewHeap) DeleteMin() heap.Item {
 	v := h.Root
 
-	h.Root = h.merge(v.Right, v.Left)
+	h.Root = merge(v.Right, v.Left)
 
 	return v.Item
 }
