@@ -173,6 +173,22 @@ func (fh *Heap) link(y, x *Node) {
 	y.mark = false
 }
 
+// DecreaseKey decreases the key of given node
+func (fh *Heap) DecreaseKey(x *Node, k heap.Item) {
+	if x.Key.Compare(k) < 0 {
+		panic("new Key is greater than the previous one")
+	}
+	x.Key = k
+	y := x.parent
+	if y != nil && x.Key.Compare(y.Key) < 0 {
+		fh.cut(x, y)
+		fh.cascadingCut(y)
+	}
+	if x.Key.Compare(fh.min.Key) < 0 {
+		fh.min = x
+	}
+}
+
 // Vis visualize
 func (fh Heap) Vis() {
 	if fh.min == nil {
