@@ -10,7 +10,7 @@ import (
 
 // Heap is a implementation of Fibonacci heap.
 type Heap struct {
-	Min *Node
+	min *Node
 	N   int
 }
 
@@ -23,19 +23,19 @@ type Node struct {
 }
 
 func (fh *Heap) addRoot(x *Node) {
-	if fh.Min == nil {
+	if fh.min == nil {
 		// create fh's root list containing only x
 		x.left = x
 		x.right = x
-		fh.Min = x
+		fh.min = x
 	} else {
 		// insert x to fh's root list
-		fh.Min.left.right = x
-		x.right = fh.Min
-		x.left = fh.Min.left
-		fh.Min.left = x
-		if x.Key.Compare(fh.Min.Key) < 0 {
-			fh.Min = x
+		fh.min.left.right = x
+		x.right = fh.min
+		x.left = fh.min.left
+		fh.min.left = x
+		if x.Key.Compare(fh.min.Key) < 0 {
+			fh.min = x
 		}
 	}
 }
@@ -43,7 +43,7 @@ func (fh *Heap) addRoot(x *Node) {
 // MakeHeap creates and returns a new, empty heap.
 func MakeHeap() *Heap {
 	var fh Heap
-	fh.Min = nil
+	fh.min = nil
 	fh.N = 0
 	return &fh
 }
@@ -62,20 +62,20 @@ func (fh *Heap) Insert(x *Node) *Node {
 
 // Minimum returns pointer to the heap's node holding the minimum Key.
 func (fh *Heap) Minimum() *Node {
-	return fh.Min
+	return fh.min
 }
 
 // Union creates and returns the merge of two mergeable heaps.
 func (fh *Heap) Union(fh2 *Heap) *Heap {
 	newFH := MakeHeap()
-	newFH.Min = fh.Min
+	newFH.min = fh.min
 
-	newFH.Min.left.right = fh2.Min
-	fh2.Min.left.right = newFH.Min
-	fh2.Min.left, newFH.Min.left = newFH.Min.left, fh2.Min.left
+	newFH.min.left.right = fh2.min
+	fh2.min.left.right = newFH.min
+	fh2.min.left, newFH.min.left = newFH.min.left, fh2.min.left
 
-	if fh.Min == nil || (fh2.Min != nil && fh.Min.Key.Compare(fh2.Min.Key) > 0) {
-		newFH.Min = fh2.Min
+	if fh.min == nil || (fh2.min != nil && fh.min.Key.Compare(fh2.min.Key) > 0) {
+		newFH.min = fh2.min
 	}
 	newFH.N = fh.N + fh2.N
 	return newFH
@@ -84,7 +84,7 @@ func (fh *Heap) Union(fh2 *Heap) *Heap {
 // ExtractMin extracts the node with minimum Key from a heap
 // and returns pointer to this node.
 func (fh *Heap) ExtractMin() *Node {
-	z := fh.Min
+	z := fh.min
 	if z != nil {
 		for {
 			// add z children to fh's root list
@@ -110,9 +110,9 @@ func (fh *Heap) ExtractMin() *Node {
 		z.right.left = z.left
 
 		if z == z.right {
-			fh.Min = nil
+			fh.min = nil
 		} else {
-			fh.Min = z.right
+			fh.min = z.right
 			fh.consolidate()
 		}
 		fh.N--
@@ -122,7 +122,7 @@ func (fh *Heap) ExtractMin() *Node {
 
 func (fh *Heap) consolidate() {
 	degreeToRoot := make(map[int]*Node)
-	w := fh.Min
+	w := fh.min
 	last := w.left
 	for {
 		r := w.right
@@ -146,7 +146,7 @@ func (fh *Heap) consolidate() {
 		}
 		w = r
 	}
-	fh.Min = nil
+	fh.min = nil
 	for _, v := range degreeToRoot {
 		fh.addRoot(v)
 	}
@@ -175,7 +175,7 @@ func (fh *Heap) link(y, x *Node) {
 
 // Vis visualize
 func (fh Heap) Vis() {
-	if fh.Min == nil {
+	if fh.min == nil {
 		fmt.Println("<empty>")
 		return
 	}
@@ -200,5 +200,5 @@ func (fh Heap) Vis() {
 			}
 		}
 	}
-	f(fh.Min, "")
+	f(fh.min, "")
 }
