@@ -37,17 +37,7 @@ func (fh *Heap) Insert(x *Node) *Node {
 	x.parent = nil
 	x.child = nil
 
-	if fh.Min == nil {
-		x.left = x
-		x.right = x
-		fh.Min = x
-	} else {
-		addNode(fh.Min, x)
-
-		if fh.Min.Value.Compare(x.Value) > 0 {
-			fh.Min = x
-		}
-	}
+	fh.addRoot(x)
 	fh.N++
 	return x
 }
@@ -79,24 +69,25 @@ func (fh *Heap) ExtractMin() *Node {
 	z := fh.Min
 	if z != nil {
 		for {
-			if c := z.child; c != nil {
-				c.parent = nil
-				if c.right != c {
-					z.child = c.right
-					c.right.left = c.left
-					c.left.right = c.right
+			// add z children to fh's root list
+			if x := z.child; x != nil {
+				x.parent = nil
+				if x.right != x {
+					z.child = x.right
+					x.right.left = x.left
+					x.left.right = x.right
 				} else {
 					z.child = nil
 				}
-				c.left = z.left
-				c.right = z
-				z.left.right = c
-				z.left = c
+				x.left = z.left
+				x.right = z
+				z.left.right = x
+				z.left = x
 			} else {
 				break
 			}
 		}
-
+		// remove z from fh's root list
 		z.left.right = z.right
 		z.right.left = z.left
 
@@ -116,18 +107,15 @@ func (fh *Heap) consolidate() {
 	w := fh.Min
 	last := w.left
 	for {
-		r := w.right                                         // wchodze dla 3 dla 3 nic nie zrobie wiec wstawie 3 do mapy
-		x := w                                               // wchodze dla 5 dla 5 wejde w if bo jest cos w mapie
-		d := x.degree                                        // w mapie jest 3 z 5 jako dziecko na 1 a na 0 nic nie ma
-		fmt.Println(" XXXX ", x.Value, " xr", x.right.Value) // wchdoze dla 9 podstawiam 9 pod 0 w mapie
-		for {                                                // wchodze dla 2 2 najpierw spotka 9 a pozniej 3 w mapie i jest zapisana na d:2 w mapie z dziecmi 3 i 9
-			if y, ok := degreeToRoot[d]; !ok { // wchodze dla 4 i wrzucam ja do mapy na 0
-				fmt.Println(" x ", x.Value, d, degreeToRoot) // wchodze dla 6 i patrze ze jest 4 na 0 wiec robie 6 dzieckiem 4
-				break                                        // w mapie jest 4 na 1 i 2 na 2
-			} else { // wchodze dla 8 i wstawiam ja na 0 w mapie
-				fmt.Println(" YYYY ", y.Value)    // TERAZ POWINIENEM SKONCZYC, 3 powinna byc kolejna po 8 ale jest 2 !!!
-				if y.Value.Compare(x.Value) < 0 { // 2 nie jest trojka wiec petla sie nie konczy tylko idzie dalej
-					y, x = x, y // czemu 8 ma wskaznik na 2 po prawej stronie ?
+		r := w.right
+		x := w
+		d := x.degree
+		for {
+			if y, ok := degreeToRoot[d]; !ok {
+				break
+			} else {
+				if y.Value.Compare(x.Value) < 0 {
+					y, x = x, y
 				}
 				fh.link(y, x)
 				delete(degreeToRoot, d)
@@ -140,7 +128,6 @@ func (fh *Heap) consolidate() {
 		}
 		w = r
 	}
-	fmt.Println("MAAAP", degreeToRoot)
 	fh.Min = nil
 	for _, v := range degreeToRoot {
 		fh.addRoot(v)
@@ -149,11 +136,11 @@ func (fh *Heap) consolidate() {
 }
 
 func (fh *Heap) link(y, x *Node) {
+	// remove y from fh's root list
 	y.right.left = y.left
 	y.left.right = y.right
-
+	// make y a child of x and increase degree of x
 	y.parent = x
-
 	if x.child == nil {
 		x.child = y
 		y.left = y
@@ -168,24 +155,22 @@ func (fh *Heap) link(y, x *Node) {
 	y.mark = false
 }
 
-func (fh *Heap) addRoot(n *Node) {
+func (fh *Heap) addRoot(x *Node) {
 	if fh.Min == nil {
-		n.left = n
-		n.right = n
-		fh.Min = n
+		// create fh's root list containing only x
+		x.left = x
+		x.right = x
+		fh.Min = x
 	} else {
-		addNode(fh.Min, n)
-		if n.Value.Compare(fh.Min.Value) < 0 {
-			fh.Min = n
+		// insert x to fh's root list
+		fh.Min.left.right = x
+		x.right = fh.Min
+		x.left = fh.Min.left
+		fh.Min.left = x
+		if x.Value.Compare(fh.Min.Value) < 0 {
+			fh.Min = x
 		}
 	}
-}
-
-func addNode(h, x *Node) {
-	h.left.right = x
-	x.right = h
-	x.left = h.left
-	h.left = x
 }
 
 // Vis visualize
@@ -216,16 +201,4 @@ func (fh Heap) Vis() {
 		}
 	}
 	f(fh.Min, "")
-}
-
-func (n *Node) GetRight() *Node {
-	return n.right
-}
-
-func (n *Node) GetLeft() *Node {
-	return n.left
-}
-
-func (n *Node) GetChild() *Node {
-	return n.child
 }
