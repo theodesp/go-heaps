@@ -1,5 +1,5 @@
 go-heaps
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors)
 ---
 <a href="https://godoc.org/github.com/theodesp/go-heaps">
 <img src="https://godoc.org/github.com/theodesp/go-heaps?status.svg" alt="GoDoc">
@@ -28,7 +28,8 @@ $ go get -u github.com/theodesp/go-heaps
 
 **Heaps**
 
-* [Pairing Heap](https://en.wikipedia.org/wiki/Pairing_heap): A pairing heap is a type of heap data structure with relatively simple implementation and excellent practical amortized performance,
+* [Pairing Heap](https://en.wikipedia.org/wiki/Pairing_heap): A pairing heap is a type of heap data structure with relatively simple implementation and excellent practical amortized performance.
+* [Leftlist Heap](https://www.geeksforgeeks.org/leftist-tree-leftist-heap/): a variant of a binary heap. Every node has an s-value which is the distance to the nearest leaf. In contrast to a binary heap, a leftist tree attempts to be very unbalanced.
 
 
 ## Usage
@@ -58,14 +59,14 @@ func main()  {
 ```
 
 ## Complexity
-| Operation     | Pairing       |
-| ------------- |:-------------:|
-| FindMin       | Θ(1)          |
-| DeleteMin     | O(log n)      |
-| Insert        | Θ(1)          |
-| Find          | O(n)          |
-| Delete        | O(n)          |
-| Adjust        | O(n)          |
+| Operation     | Pairing       | Leftlist      |
+| ------------- |:-------------:|:-------------:|
+| FindMin       | Θ(1)          | Θ(1)          |
+| DeleteMin     | O(log n)      | O(log n)      |
+| Insert        | Θ(1)          | O(log n)      |
+| Find          | O(n)          |               |
+| Delete        | O(n)          |               |
+| Adjust        | O(n)          |               |
 
 
 ## Contributors
@@ -74,8 +75,8 @@ Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
-| [<img src="https://avatars1.githubusercontent.com/u/1137632?v=4" width="100px;"/><br /><sub><b>Miroojin Bakshi</b></sub>](http://mb-14.github.io)<br />[💻](https://github.com/theodesp/go-heaps/commits?author=mb-14 "Code") |
-| :---: |
+| [<img src="https://avatars1.githubusercontent.com/u/1137632?v=4" width="100px;"/><br /><sub><b>Miroojin Bakshi</b></sub>](http://mb-14.github.io)<br />[💻](https://github.com/theodesp/go-heaps/commits?author=mb-14 "Code") | [<img src="https://avatars2.githubusercontent.com/u/1369709?v=4" width="100px;"/><br /><sub><b>Syfaro</b></sub>](https://syfaro.net)<br />[💻](https://github.com/theodesp/go-heaps/commits?author=Syfaro "Code") |
+| :---: | :---: |
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind welcome!

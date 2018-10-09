@@ -1,4 +1,4 @@
-package leftistheap
+package leftlist
 
 import (
 	"sort"
