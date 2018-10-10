@@ -3,8 +3,14 @@ language: go
 os:
  - linux
 
+# This project contains referecnes to the absolution GitHub path,
+# e.g. github.com/theodesp/go-heaps/leftlist.
+# That means, by default, if someone forks the repo and makes changes,
+# Travis won't pass for the branch on their own repo. To fix that, we move the directory
 before_install:
  - make debs
+ - mkdir -p $TRAVIS_BUILD_DIR $GOPATH/src/github.com/theodesp
+ - test ! -d $GOPATH/src/github.com/theodesp/go-heaps && mv $TRAVIS_BUILD_DIR $GOPATH/src/github.com/theodesp/go-heaps || true
 
 after_success:
  - codecov
