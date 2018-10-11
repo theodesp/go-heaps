@@ -33,9 +33,9 @@ func (b *BinomialHeap) Insert(v heap.Item) heap.Item {
 }
 
 // DeleteMin removes the smallest item from the BinomialHeap and returns it
-// The complexity is O(log n) amortized.
+// The complexity is O(log n).
 func (b *BinomialHeap) DeleteMin() heap.Item {
-	if (b.root == nil) {
+	if b.root == nil {
 		return nil
 	}
 
@@ -44,20 +44,20 @@ func (b *BinomialHeap) DeleteMin() heap.Item {
 	next := min.sibling
 	nextPrev := min
 
-	for (next != nil) {
-		if (next.item.Compare(min.item) < 0) {
+	for next != nil {
+		if next.item.Compare(min.item) < 0 {
 			min = next
 			minPrev = nextPrev
 		}
-		nextPrev = next;
-		next = next.sibling;
+		nextPrev = next
+		next = next.sibling
 	}
 	b.removeTreeRoot(min, minPrev)
 	return min.item
 }
 
 // FindMin returns the smallest item in the heap.
-// The complexity is O(1).
+// The complexity is O(log n).
 func (b *BinomialHeap) FindMin() heap.Item {
 	if b.root == nil {
 		return nil
@@ -114,6 +114,27 @@ func (b *BinomialHeap) union(heap *BinomialHeap) *node {
 	return newRoot
 }
 
+func (b *BinomialHeap) removeTreeRoot(root, prev *node) {
+	// Remove root from the heap
+	if root == b.root {
+		b.root = root.sibling
+	} else {
+		prev.sibling = root.sibling
+	}
+
+	var newRoot *node
+	child := root.child
+	for child != nil {
+		next := child.sibling
+		child.sibling = newRoot
+		child.parent = nil
+		newRoot = child
+		child = next
+	}
+	newHeap := &BinomialHeap{root: newRoot}
+	b.root = b.union(newHeap)
+}
+
 func merge(a *BinomialHeap, b *BinomialHeap) *node {
 	if a.root == nil {
 		return b.root
@@ -161,25 +182,4 @@ func linkNodes(a, b *node) {
 	b.sibling = a.child
 	a.child = b
 	a.degree++
-}
-
-func (b *BinomialHeap) removeTreeRoot(root, prev *node) {
-	// Remove root from the heap
-	if root == b.root {
-		b.root = root.sibling
-	} else {
-		prev.sibling = root.sibling
-	}
-
-	var newRoot *node
-	child := root.child
-	for child != nil {
-		next := child.sibling
-		child.sibling = newRoot
-		child.parent = nil
-		newRoot = child
-		child = next
-	}
-	newHeap := &BinomialHeap{root:newRoot}
-	b.root = b.union(newHeap)
 }
