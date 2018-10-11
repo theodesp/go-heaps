@@ -13,11 +13,8 @@ before_install:
  - mkdir -p $TRAVIS_BUILD_DIR $GOPATH/src/github.com/theodesp
  - test ! -d $GOPATH/src/github.com/theodesp/go-heaps && mv $TRAVIS_BUILD_DIR $GOPATH/src/github.com/theodesp/go-heaps || true
 
-after_success:
- - codecov
-
 # test on the two most recent releases and tip
- go:
+go:
  - "1.10.x"
  - "1.11.x"
  - "tip"
@@ -28,6 +25,9 @@ matrix:
 
 script:
  - make test
+
+after_success:
+ - bash <(curl -s https://codecov.io/bash)
 
 notifications:
  email: false
