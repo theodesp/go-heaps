@@ -5,13 +5,12 @@ format:
 
 .PHONY: debs
 debs:
-	GOPATH=$(GOPATH) go get ./...
 	GOPATH=$(GOPATH) go get -u github.com/stretchr/testify
 	GOPATH=$(GOPATH) go get -u github.com/fortytw2/leaktest
 
 .PHONY: test
 test:
-	GOPATH=$(GOPATH) go test -race $(go list ./...)
+	GOPATH=$(GOPATH) go test -race $$(go list ./... | grep -v example) -coverprofile=coverage.txt -covermode=atomic
 
 .PHONY: bench
 bench:
