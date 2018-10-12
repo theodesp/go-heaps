@@ -4,107 +4,85 @@
 package fibonacci
 
 import (
-	goheap "github.com/theodesp/go-heaps"
+	heap "github.com/theodesp/go-heaps"
 )
 
 // FibonacciHeap is a implementation of Fibonacci heap.
 type FibonacciHeap struct {
-	root   *Node
-	length int
+	root   *node
 }
 
-// Node holds structure of nodes inside Fibonacci heap.
-type Node struct {
-	item                      goheap.Item
-	prev, next, parent, child *Node
+// node holds structure of nodes inside Fibonacci heap.
+type node struct {
+	item                      heap.Item
+	prev, next, parent, child *node
 	isMarked                  bool
 	degree                    int
 }
 
-func (fh *FibonacciHeap) insertRoot(x *Node) {
-	if fh.root == nil {
-		// create fh's root list containing only x
-		x.prev = x
-		x.next = x
-		fh.root = x
-	} else {
-		// insert x to fh's root list
-		insert(fh.root, x)
-		if x.item.Compare(fh.root.item) < 0 {
-			fh.root = x
-		}
-	}
-}
-
-func insert(x, y *Node) {
-	x.prev.next = y
-	y.next = x
-	y.prev = x.prev
-	x.prev = y
-}
-
 // New creates and returns a new, empty heap.
 func New() *FibonacciHeap {
-	return &FibonacciHeap{root: nil, length: 0}
+	return &FibonacciHeap{root: nil}
 }
 
 // Insert inserts a new node, with predeclared item, to the heap.
-func (fh *FibonacciHeap) Insert(v goheap.Item) goheap.Item {
-	x := &Node{item: v, isMarked: false}
+func (fh *FibonacciHeap) Insert(item heap.Item) heap.Item {
+	n := &node{item: item, isMarked: false}
 
-	fh.insertRoot(x)
-	fh.length++
-	return v
+	fh.insertRoot(n)
+	return item
 }
 
-// FindMin returns pointer to the heap's node holding the minimum item.
-func (fh *FibonacciHeap) FindMin() goheap.Item {
+// FindMin returns the minimum item.
+func (fh *FibonacciHeap) FindMin() heap.Item {
+	if fh.root == nil {
+		return nil
+	}
 	return fh.root.item
 }
 
 // DeleteMin extracts the node with minimum item from a heap
-// and returns pointer to this node.
-func (fh *FibonacciHeap) DeleteMin() goheap.Item {
-	z := fh.root
-	if z == nil {
+// and returns the minimum item.
+func (fh *FibonacciHeap) DeleteMin() heap.Item {
+	r := fh.root
+	if r == nil {
 		return nil
 	}
 	for {
-		// add z children to fh's root list
-		if x := z.child; x != nil {
+		// add r children to fh's root list
+		if x := r.child; x != nil {
 			x.parent = nil
 			if x.next != x {
-				z.child = x.next
+				r.child = x.next
 				x.next.prev = x.prev
 				x.prev.next = x.next
 			} else {
-				z.child = nil
+				r.child = nil
 			}
-			x.prev = z.prev
-			x.next = z
-			z.prev.next = x
-			z.prev = x
+			x.prev = r.prev
+			x.next = r
+			r.prev.next = x
+			r.prev = x
 		} else {
 			break
 		}
 	}
-	// remove z from fh's root list
-	z.prev.next = z.next
-	z.next.prev = z.prev
+	// remove r from fh's root list
+	r.prev.next = r.next
+	r.next.prev = r.prev
 
-	if z == z.next {
+	if r == r.next {
 		fh.root = nil
 	} else {
-		fh.root = z.next
+		fh.root = r.next
 		fh.consolidate()
 	}
-	fh.length--
 
-	return z.item
+	return r.item
 }
 
 func (fh *FibonacciHeap) consolidate() {
-	degreeToRoot := make(map[int]*Node)
+	degreeToRoot := make(map[int]*node)
 	w := fh.root
 	last := w.prev
 	for {
@@ -136,7 +114,12 @@ func (fh *FibonacciHeap) consolidate() {
 
 }
 
-func link(x, y *Node) {
+// Clear resets heap.
+func (fh *FibonacciHeap) Clear() {
+	fh.root = nil
+}
+
+func link(x, y *node) {
 	// remove y from fh's root list
 	y.next.prev = y.prev
 	y.prev.next = y.next
@@ -153,15 +136,31 @@ func link(x, y *Node) {
 	y.isMarked = false
 }
 
-// Clear resets heap.
-func (fh *FibonacciHeap) Clear() {
-	fh.length = 0
-	fh.root = &Node{}
+func (fh *FibonacciHeap) insertRoot(n *node) {
+	if fh.root == nil {
+		// create fh's root list containing only n
+		n.prev = n
+		n.next = n
+		fh.root = n
+	} else {
+		// insert n to fh's root list
+		insert(fh.root, n)
+		if n.item.Compare(fh.root.item) < 0 {
+			fh.root = n
+		}
+	}
+}
+
+func insert(x, y *node) {
+	x.prev.next = y
+	y.next = x
+	y.prev = x.prev
+	x.prev = y
 }
 
 /*
 // DecreaseKey decreases the key of given node.
-func (fh *FibonacciHeap) DecreaseKey(x *Node, k goheap.Item) {
+func (fh *FibonacciHeap) DecreaseKey(x *node, k heap.Item) {
 	if x.item.Compare(k) < 0 {
 		panic("new item is greater than the previous one")
 	}
@@ -176,7 +175,7 @@ func (fh *FibonacciHeap) DecreaseKey(x *Node, k goheap.Item) {
 	}
 }
 
-func (fh *FibonacciHeap) cut(x, y *Node) {
+func (fh *FibonacciHeap) cut(x, y *node) {
 	// remove x from y's children list and decrement y's degree
 	if x.next != x {
 		y.child = x.next
@@ -193,7 +192,7 @@ func (fh *FibonacciHeap) cut(x, y *Node) {
 	x.isMarked = false
 }
 
-func (fh *FibonacciHeap) cascadingCut(y *Node) {
+func (fh *FibonacciHeap) cascadingCut(y *node) {
 	z := y.parent
 	if z != nil {
 		if !y.isMarked {
@@ -203,18 +202,5 @@ func (fh *FibonacciHeap) cascadingCut(y *Node) {
 			fh.cascadingCut(z)
 		}
 	}
-}
-*/
-
-/*
-// Delete deletes node x from heap fh.
-func (fh *FibonacciHeap) Delete(x *Node) {
-	switch x.item.(type) {
-	case goheap.Integer:
-		fh.DecreaseKey(x, goheap.Item(goheap.Integer(-1<<63)))
-	case goheap.String:
-		fh.DecreaseKey(x, goheap.Item(goheap.String("")))
-	}
-	fh.DeleteMin()
 }
 */
