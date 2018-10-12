@@ -121,7 +121,7 @@ func (h *Treap) DeleteMin() goheap.Item {
 	}
 
 	min := v.Left
-	v.Left = nil
+	v.Left = merge(v.Left.Left, v.Left.Right)
 	return min.Key
 }
 
