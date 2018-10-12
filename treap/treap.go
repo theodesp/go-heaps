@@ -1,4 +1,7 @@
-// Package skew implements a Treap (tree-heap) Data structure
+// Package treap implements a treap (tree-heap) data structure
+// Each node hold a key and a random priority
+// Keys arranged as binary search tree (BST)
+// Priorities arranged as heap
 //
 // Structure is not thread safe.
 //
@@ -7,8 +10,8 @@
 package treap
 
 import (
-	"fmt"
 	"math/rand"
+	"time"
 
 	goheap "github.com/theodesp/go-heaps"
 )
@@ -89,7 +92,10 @@ type Treap struct {
 }
 
 // Init initializes or clears the Treap
-func (h *Treap) Init() *Treap { return &Treap{} }
+func (h *Treap) Init() *Treap {
+	rand.Seed(time.Now().UTC().UnixNano())
+	return &Treap{}
+}
 
 // New returns an initialized Treap.
 func New() *Treap { return new(Treap).Init() }
@@ -136,22 +142,4 @@ func (h *Treap) FindMin() goheap.Item {
 // Clear removes all items from the heap.
 func (h *Treap) Clear() {
 	h.Root = nil
-}
-
-type Printable interface {
-	Print()
-}
-
-func (h *Node) Print(lv int) {
-	if h == nil {
-		return
-	}
-
-	h.Left.Print(lv + 1)
-	for i := 0; i < lv; i++ {
-		fmt.Print("-")
-	}
-	fmt.Printf("%d-", h.Priority)
-	h.Key.(Printable).Print()
-	h.Right.Print(lv + 1)
 }
