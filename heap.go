@@ -15,6 +15,20 @@ type Interface interface {
 	Clear()
 }
 
+// Extended adds operations on heaps are often useful.
+type Extended interface {
+	Interface
+	// Return the heap formed by taking the union of the itemdisjoint
+ 	// heaps a and b
+	Meld(a Interface, b Interface) Interface
+
+	// Adjusts the key of item old in heap h to new
+	Adjust(h Interface, old, new Item) Item
+
+	// Delete arbitrary item from heap h.
+	Delete(h Interface, item Item) Item
+}
+
 // Item is the basic element that is inserted in a heap
 type Item interface {
 	// Should return a number:

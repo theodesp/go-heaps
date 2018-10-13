@@ -1,5 +1,5 @@
 go-heaps
-[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors)
 ---
 <a href="https://godoc.org/github.com/theodesp/go-heaps">
 <img src="https://godoc.org/github.com/theodesp/go-heaps?status.svg" alt="GoDoc">
@@ -76,8 +76,8 @@ Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
-| [<img src="https://avatars1.githubusercontent.com/u/1137632?v=4" width="100px;"/><br /><sub><b>Miroojin Bakshi</b></sub>](http://mb-14.github.io)<br />[💻](https://github.com/theodesp/go-heaps/commits?author=mb-14 "Code") | [<img src="https://avatars2.githubusercontent.com/u/1369709?v=4" width="100px;"/><br /><sub><b>Syfaro</b></sub>](https://syfaro.net)<br />[💻](https://github.com/theodesp/go-heaps/commits?author=Syfaro "Code") | [<img src="https://avatars0.githubusercontent.com/u/26116041?s=460&v=4" width="100px;"/><br /><sub><b>Radliński Ignacy</b></sub>](https://www.linkedin.com/in/ignacy-radlinski)<br />[💻](https://github.com/theodesp/go-heaps/commits?author=radlinskii "Code")
-| :---: | :---: |
+| [<img src="https://avatars1.githubusercontent.com/u/1137632?v=4" width="100px;"/><br /><sub><b>Miroojin Bakshi</b></sub>](http://mb-14.github.io)<br />[💻](https://github.com/theodesp/go-heaps/commits?author=mb-14 "Code") | [<img src="https://avatars2.githubusercontent.com/u/1369709?v=4" width="100px;"/><br /><sub><b>Syfaro</b></sub>](https://syfaro.net)<br />[💻](https://github.com/theodesp/go-heaps/commits?author=Syfaro "Code") | [<img src="https://avatars0.githubusercontent.com/u/328805?v=4" width="100px;"/><br /><sub><b>Theofanis Despoudis</b></sub>](https://github.com/theodesp)<br />[💻](https://github.com/theodesp/go-heaps/commits?author=theodesp "Code") | [<img src="https://avatars0.githubusercontent.com/u/26116041?v=4" width="100px;"/><br /><sub><b>Radliński Ignacy</b></sub>](https://www.linkedin.com/in/ignacy-radlinski)<br />[💻](https://github.com/theodesp/go-heaps/commits?author=radlinskii "Code") | [<img src="https://avatars3.githubusercontent.com/u/1152286?v=4" width="100px;"/><br /><sub><b>Don McNamara</b></sub>](https://github.com/DonMcNamara)<br />[🚇](#infra-DonMcNamara "Infrastructure (Hosting, Build-Tools, etc)") | [<img src="https://avatars3.githubusercontent.com/u/9217338?v=4" width="100px;"/><br /><sub><b>Afrizal Fikri</b></sub>](https://koneko096.github.io/)<br />[💻](https://github.com/theodesp/go-heaps/commits?author=koneko096 "Code") |
+| :---: | :---: | :---: | :---: | :---: | :---: |
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind welcome!
