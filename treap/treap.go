@@ -16,6 +16,8 @@ import (
 	goheap "github.com/theodesp/go-heaps"
 )
 
+const MaxInt = int(^uint(0) >> 1)
+
 type Node struct {
 	Priority    goheap.Integer
 	Key         goheap.Item
@@ -83,7 +85,7 @@ func (t *Node) insert(pnode *Node) *Node {
 
 // Generate priority for new node.
 func generatePriority() goheap.Integer {
-	return goheap.Integer(rand.Intn(65536))
+	return goheap.Integer(rand.Intn(MaxInt))
 }
 
 // Treap implementation.
