@@ -32,7 +32,7 @@ func split(t *Node, key goheap.Item) (*Node, *Node) {
 
 	if t == nil {
 		return nil, nil
-	} else if t.Key.Compare(key) != 1 {
+	} else if t.Key.Compare(key) <= 0 {
 		t.Right, right = split(t.Right, key)
 		left := t
 		return left, right
@@ -54,7 +54,7 @@ func merge(x, y *Node) *Node {
 		return x
 	}
 
-	if x.Priority.Compare(y.Priority) == 1 {
+	if x.Priority.Compare(y.Priority) > 0 {
 		x.Right = merge(x.Right, y)
 		return x
 	} else {
@@ -68,7 +68,7 @@ func (t *Node) insert(pnode *Node) *Node {
 		return pnode
 	}
 
-	if pnode.Priority.Compare(t.Priority) == 1 {
+	if pnode.Priority.Compare(t.Priority) > 0 {
 		pnode.Left, pnode.Right = split(t, pnode.Key)
 		return pnode
 	}
@@ -93,7 +93,7 @@ type Treap struct {
 
 // Init initializes or clears the Treap
 func (h *Treap) Init() *Treap {
-	rand.Seed(time.Now().UTC().UnixNano())
+	rand.Seed(time.Now().UnixNano())
 	return &Treap{}
 }
 
@@ -118,6 +118,10 @@ func (h *Treap) Insert(v goheap.Item) goheap.Item {
 // DeleteMin deletes the minimum value and returns it.
 func (h *Treap) DeleteMin() goheap.Item {
 	v := h.Root
+	if v == nil {
+		return nil
+	}
+
 	if v.Left == nil {
 		h.Root = v.Right
 		return v.Key
@@ -134,8 +138,13 @@ func (h *Treap) DeleteMin() goheap.Item {
 // FindMin finds the minimum value.
 func (h *Treap) FindMin() goheap.Item {
 	v := h.Root
+	if v == nil {
+		return nil
+	}
+
 	for ; v.Left != nil; v = v.Left {
 	}
+
 	return v.Key
 }
 
