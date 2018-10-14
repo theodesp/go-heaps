@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/theodesp/go-heaps"
-	"github.com/theodesp/go-heaps/skew"
+	skewheap "github.com/theodesp/go-heaps/skew"
 	"fmt"
 )
 

@@ -9,6 +9,8 @@ import (
 	heap "github.com/theodesp/go-heaps"
 )
 
+var _ heap.Extended = (*PairHeap)(nil)
+
 // PairHeap is an implementation of a Pairing Heap.
 // The zero value for PairHeap Root is an empty Heap.
 type PairHeap struct {
@@ -44,14 +46,14 @@ func (n *node) detach() []*node {
 	return n.children
 }
 
-func (n *node) iterItem(iter ItemIterator) {
+func (n *node) iterItem(iter heap.ItemIterator) {
 	if !iter(n.item) {
 		return
 	}
 	n.iterChildren(n.children, iter)
 }
 
-func (n *node) iterChildren(children []*node, iter ItemIterator) {
+func (n *node) iterChildren(children []*node, iter heap.ItemIterator) {
 	if len(children) == 0 {
 		return
 	}
@@ -119,7 +121,7 @@ func (p *PairHeap) FindMin() heap.Item {
 // The complexity is O(1).
 func (p *PairHeap) Insert(v heap.Item) heap.Item {
 	n := node{item: v}
-	merge(&p.root, &n)
+	p.root = merge(p.root, &n)
 	return n.item
 }
 
@@ -153,7 +155,8 @@ func (p *PairHeap) deleteItem(item heap.Item, typ toDelete) heap.Item {
 	} else {
 		switch typ {
 		case removeMin:
-			result = *mergePairs(&p.root, p.root.children)
+			result = *p.root
+			p.root = mergePairs(p.root, p.root.children)
 		case removeItem:
 			node := p.root.findNode(item)
 			if node == nil {
@@ -173,7 +176,7 @@ func (p *PairHeap) deleteItem(item heap.Item, typ toDelete) heap.Item {
 
 // Adjusts the value to the node item and returns it
 // The complexity is O(n) amortized.
-func (p *PairHeap) Adjust(item heap.Item, new heap.Item) heap.Item {
+func (p *PairHeap) Adjust(item, new heap.Item) heap.Item {
 	n := p.root.findNode(item)
 	if n == nil {
 		return nil
@@ -185,9 +188,7 @@ func (p *PairHeap) Adjust(item heap.Item, new heap.Item) heap.Item {
 	} else {
 		children := n.detach()
 		p.Insert(new)
-		for _, node := range children {
-			p.Insert(node.item)
-		}
+		p.root.children = append(p.root.children, children...)
 		return n.item
 	}
 }
@@ -210,48 +211,45 @@ func (p *PairHeap) Find(item heap.Item) heap.Item {
 	return found
 }
 
-// ItemIterator allows callers of Do to iterate in-order over portions of
-// the tree.  When this function returns false, iteration will stop and the
-// function will immediately return.
-type ItemIterator func(i heap.Item) bool
 
 // Do calls function cb on each element of the PairingHeap, in order of appearance.
 // The behavior of Do is undefined if cb changes *p.
-func (p *PairHeap) Do(iter ItemIterator) {
+func (p *PairHeap) Do(iter heap.ItemIterator) {
 	if p.IsEmpty() {
 		return
 	}
 	p.root.iterItem(iter)
 }
 
-func merge(first **node, second *node) *node {
-	q := *first
-	if q.item == nil { // Case when root is empty
-		*first = second
-		return *first
+//func (p *PairHeap) Meld(a heap.Interface) heap.Interface  {
+//	return p
+//}
+
+func merge(a, b *node) *node {
+	if a.item == nil { // Case when root is empty
+		a = b
+		return a
 	}
 
-	if q.item.Compare(second.item) < 0 {
+	if a.item.Compare(b.item) < 0 {
 		// put 'second' as the first child of 'first' and update the parent
-		q.children = append([]*node{second}, q.children...)
-		second.parent = *first
-		return *first
+		a.children = append([]*node{b}, a.children...)
+		b.parent = a
+		return a
 	} else {
 		// put 'first' as the first child of 'second' and update the parent
-		second.children = append([]*node{q}, second.children...)
-		q.parent = second
-		*first = second
-		return second
+		b.children = append([]*node{a}, b.children...)
+		a.parent = b
+		return b
 	}
 }
 
 // Merges heaps together
-func mergePairs(root **node, heaps []*node) *node {
-	q := *root
+func mergePairs(root *node, heaps []*node) *node {
 	if len(heaps) == 1 {
-		*root = heaps[0]
+		root = heaps[0]
 		heaps[0].parent = nil
-		return q
+		return root
 	}
 	var merged *node
 	for { // iteratively merge heaps
@@ -259,15 +257,15 @@ func mergePairs(root **node, heaps []*node) *node {
 			break
 		}
 		if merged == nil {
-			merged = merge(&heaps[0], heaps[1])
+			merged = merge(heaps[0], heaps[1])
 			heaps = heaps[2:]
 		} else {
-			merged = merge(&merged, heaps[0])
+			merged = merge(merged, heaps[0])
 			heaps = heaps[1:]
 		}
 	}
-	*root = merged
+	root = merged
 	merged.parent = nil
 
-	return q
+	return root
 }

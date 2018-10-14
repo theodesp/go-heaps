@@ -10,7 +10,7 @@ debs:
 
 .PHONY: test
 test:
-	GOPATH=$(GOPATH) go test -race $$(go list ./... | grep -v example) -coverprofile=coverage.txt -covermode=atomic
+	GOPATH=$(GOPATH) go test -race $(go list ./... | grep -v example) -coverprofile=coverage.txt -covermode=atomic
 
 .PHONY: bench
 bench:

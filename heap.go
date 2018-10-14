@@ -18,15 +18,15 @@ type Interface interface {
 // Extended adds operations on heaps are often useful.
 type Extended interface {
 	Interface
-	// Return the heap formed by taking the union of the itemdisjoint
- 	// heaps a and b
-	Meld(a Interface, b Interface) Interface
+	//// Return the heap formed by taking the union of the itemdisjoint
+	//// current heap and a
+	//Meld(a Interface) Interface
 
 	// Adjusts the key of item old in heap h to new
-	Adjust(h Interface, old, new Item) Item
+	Adjust(old, new Item) Item
 
 	// Delete arbitrary item from heap h.
-	Delete(h Interface, item Item) Item
+	Delete(item Item) Item
 }
 
 // Item is the basic element that is inserted in a heap
@@ -37,6 +37,11 @@ type Item interface {
 	//    positive , if a > b
 	Compare(than Item) int
 }
+
+// ItemIterator allows callers of Do to iterate in-order over portions of
+// the tree.  When this function returns false, iteration will stop and the
+// function will immediately return.
+type ItemIterator func(item Item) bool
 
 type String string
 type Integer int
