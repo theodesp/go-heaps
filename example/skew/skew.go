@@ -1,4 +1,4 @@
-package skew
+package main
 
 import (
 	"github.com/theodesp/go-heaps"

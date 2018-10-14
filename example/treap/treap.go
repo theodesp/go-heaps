@@ -1,4 +1,4 @@
-package treap
+package main
 
 import (
 	"fmt"
