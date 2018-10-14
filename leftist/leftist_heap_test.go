@@ -1,4 +1,4 @@
-package leftlist
+package leftist
 
 import (
 	"sort"
@@ -40,6 +40,25 @@ func TestLeftistHeapString(t *testing.T) {
 		if Str(str) != heap.DeleteMin().(go_heaps.String) {
 			t.Fail()
 		}
+	}
+}
+
+func TestLeftistHeap(t *testing.T) {
+	heap := &LeftistHeap{}
+
+	numbers := []int{4, 3, -1, 5, 9}
+
+	for _, number := range numbers {
+		heap.Insert(Int(number))
+	}
+
+	if heap.FindMin() != Int(-1) {
+		t.Fail()
+	}
+
+	heap.Clear()
+	if heap.FindMin() != nil {
+		t.Fail()
 	}
 }
 

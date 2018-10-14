@@ -29,7 +29,7 @@ $ go get -u github.com/theodesp/go-heaps
 **Heaps**
 
 * [Pairing Heap](https://en.wikipedia.org/wiki/Pairing_heap): A pairing heap is a type of heap data structure with relatively simple implementation and excellent practical amortized performance.
-* [Leftlist Heap](https://www.geeksforgeeks.org/leftist-tree-leftist-heap/): a variant of a binary heap. Every node has an s-value which is the distance to the nearest leaf. In contrast to a binary heap, a leftist tree attempts to be very unbalanced.
+* [Leftist Heap](https://www.geeksforgeeks.org/leftist-tree-leftist-heap/): a variant of a binary heap. Every node has an s-value which is the distance to the nearest leaf. In contrast to a binary heap, a leftist tree attempts to be very unbalanced.
 * [Skew Heap](https://en.wikipedia.org/wiki/Skew_heap): A skew heap (or self-adjusting heap) is a heap data structure implemented as a binary tree. Skew heaps are advantageous because of their ability to merge more quickly than binary heaps.
 * [Fibonacci Heap](https://en.wikipedia.org/wiki/Fibonacci_heap): a Fibonacci heap is a data structure for priority queue operations, consisting of a collection of heap-ordered trees. It has a better amortized running time than many other priority queue data structures including the binary heap and binomial heap.
 * [Binomial Heap](https://www.geeksforgeeks.org/binomial-heap-2/): A Binomial Heap is a collection of Binomial Trees. A Binomial Heap is a set of Binomial Trees where each Binomial Tree follows Min Heap property. And there can be at most one Binomial Tree of any degree.
@@ -62,7 +62,7 @@ func main()  {
 ```
 
 ## Complexity
-| Operation     | Pairing       | Leftlist      | Skew          | Fibonacci     | Binomial      | Treap         |
+| Operation     | Pairing       | Leftist      | Skew          | Fibonacci     | Binomial      | Treap         |
 | ------------- |:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|
 | FindMin       | Θ(1)          | Θ(1)          | Θ(1)          | Θ(1)			| Θ(log n)      | O(n)          |
 | DeleteMin     | O(log n)      | O(log n)      | O(log n)      | O(log n)	    | Θ(log n)      | O(n)          |

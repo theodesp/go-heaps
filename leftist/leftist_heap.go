@@ -1,4 +1,4 @@
-package leftlist
+package leftist
 
 import (
 	heap "github.com/theodesp/go-heaps"
@@ -6,14 +6,14 @@ import (
 
 // Node is a leaf in the heap.
 type Node struct {
-	Item        heap.Item
-	Left, Right *Node
+	item        heap.Item
+	left, right *Node
 	s           int // s-value (or rank)
 }
 
 // LeftistHeap is a leftist heap implementation.
 type LeftistHeap struct {
-	Root *Node
+	root *Node
 }
 
 func mergeNodes(x, y *Node) *Node {
@@ -25,7 +25,7 @@ func mergeNodes(x, y *Node) *Node {
 		return x
 	}
 	// Compare the roots of two heaps.
-	if x.Item.Compare(y.Item) == 1 {
+	if x.item.Compare(y.item) > 0 {
 		return merge(y, x)
 	} else {
 		return merge(x, y)
@@ -33,19 +33,20 @@ func mergeNodes(x, y *Node) *Node {
 }
 
 func merge(x, y *Node) *Node {
-	if x.Left == nil {
+	if x.left == nil {
 		// left child doesn't exist, so move right child to the smallest key
-		x.Left = y
-		x.Right = nil
+		// to maintain the leftList invariant
+		x.left = y
+		x.right = nil
 	} else {
-		x.Right = mergeNodes(x.Right, y)
+		x.right = mergeNodes(x.right, y)
 		// left child does exist, so compare s-values
-		if x.Left.s < x.Right.s {
-			x.Left, x.Right = x.Right, x.Left
+		if x.left.s < x.right.s {
+			x.left, x.right = x.right, x.left
 		}
 		// since we know the right child has the lower s-value, we can just
 		// add one to its s-value
-		x.s = x.Right.s + 1
+		x.s = x.right.s + 1
 	}
 
 	return x
@@ -53,7 +54,8 @@ func merge(x, y *Node) *Node {
 
 // Init initializes or clears the LeftistHeap
 func (h *LeftistHeap) Init() *LeftistHeap {
-	return &LeftistHeap{}
+	h.root = &Node{}
+	return h
 }
 
 // New returns an initialized LeftistHeap.
@@ -62,9 +64,9 @@ func New() *LeftistHeap { return new(LeftistHeap).Init() }
 // Insert adds an item into the heap.
 // The complexity is O(log n) amortized.
 func (h *LeftistHeap) Insert(item heap.Item) heap.Item {
-	h.Root = mergeNodes(&Node{
-		Item: item,
-	}, h.Root)
+	h.root = mergeNodes(&Node{
+		item: item,
+	}, h.root)
 
 	return item
 }
@@ -72,9 +74,9 @@ func (h *LeftistHeap) Insert(item heap.Item) heap.Item {
 // DeleteMin deletes the minimum value and returns it.
 // The complexity is O(log n) amortized.
 func (h *LeftistHeap) DeleteMin() heap.Item {
-	item := h.Root.Item
+	item := h.root.item
 
-	h.Root = mergeNodes(h.Root.Left, h.Root.Right)
+	h.root = mergeNodes(h.root.left, h.root.right)
 
 	return item
 }
@@ -82,10 +84,10 @@ func (h *LeftistHeap) DeleteMin() heap.Item {
 // FindMin finds the minimum value.
 // The complexity is O(1).
 func (h *LeftistHeap) FindMin() heap.Item {
-	return h.Root.Item
+	return h.root.item
 }
 
 // Clear removes all items from the heap.
 func (h *LeftistHeap) Clear() {
-	h.Root = nil
+	h.Init()
 }

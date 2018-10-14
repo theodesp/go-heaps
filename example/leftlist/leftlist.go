@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	heap := leftlist.New()
+	heap := leftist.New()
 	heap.Insert(Int(4))
 	heap.Insert(Int(19))
 	heap.Insert(Int(8))
