@@ -33,6 +33,7 @@ $ go get -u github.com/theodesp/go-heaps
 * [Skew Heap](https://en.wikipedia.org/wiki/Skew_heap): A skew heap (or self-adjusting heap) is a heap data structure implemented as a binary tree. Skew heaps are advantageous because of their ability to merge more quickly than binary heaps.
 * [Fibonacci Heap](https://en.wikipedia.org/wiki/Fibonacci_heap): a Fibonacci heap is a data structure for priority queue operations, consisting of a collection of heap-ordered trees. It has a better amortized running time than many other priority queue data structures including the binary heap and binomial heap.
 * [Binomial Heap](https://www.geeksforgeeks.org/binomial-heap-2/): A Binomial Heap is a collection of Binomial Trees. A Binomial Heap is a set of Binomial Trees where each Binomial Tree follows Min Heap property. And there can be at most one Binomial Tree of any degree.
+* [Treap Heap](https://en.wikipedia.org/wiki/Treap): A Treap and the randomized binary search tree are two closely related forms of binary search tree data structures that maintain a dynamic set of ordered keys and allow binary searches among the keys.
 
 ## Usage
 
@@ -61,15 +62,15 @@ func main()  {
 ```
 
 ## Complexity
-| Operation     | Pairing       | Leftlist      | Skew          | Fibonacci     | Binomial
-| ------------- |:-------------:|:-------------:|:-------------:|:-------------:|:-------------:
-| FindMin       | Θ(1)          | Θ(1)          | Θ(1)          | Θ(1)			| Θ(log n)
-| DeleteMin     | O(log n)      | O(log n)      | O(log n)      | O(log n)	    | Θ(log n)
-| Insert        | Θ(1)          | O(log n)      | O(log n)      | Θ(1)			| Θ(1)
-| Find          | O(n)          |               |               |				|
-| Delete        | O(n)          |               | O(log n)      | O(n)			| Θ(log n)
-| Adjust        | O(n)          |               | O(log n)      | O(n) 			| Θ(log n)
-| Meld          | Θ(1)          |               |               |               |               
+| Operation     | Pairing       | Leftlist      | Skew          | Fibonacci     | Binomial      | Treap         |
+| ------------- |:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|:-------------:|
+| FindMin       | Θ(1)          | Θ(1)          | Θ(1)          | Θ(1)			| Θ(log n)      | O(n)          |
+| DeleteMin     | O(log n)      | O(log n)      | O(log n)      | O(log n)	    | Θ(log n)      | O(n)          |
+| Insert        | Θ(1)          | O(log n)      | O(log n)      | Θ(1)			| Θ(1)          | O(n)          |
+| Find          | O(n)          |               |               |				|               |               |    
+| Delete        | O(n)          |               | O(log n)      | O(n)			| Θ(log n)      | O(n)          |
+| Adjust        | O(n)          |               | O(log n)      | O(n) 			| Θ(log n)      | O(n)          |
+| Meld          | Θ(1)          |               |               |               |               |               |
 
 ## Contributors
 
