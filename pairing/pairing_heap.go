@@ -9,6 +9,7 @@ import (
 	heap "github.com/theodesp/go-heaps"
 )
 
+// PairHeap implements the Extended interface
 var _ heap.Extended = (*PairHeap)(nil)
 
 // PairHeap is an implementation of a Pairing Heap.

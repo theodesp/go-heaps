@@ -62,6 +62,23 @@ func rangrev(n int) (out []heap.Item) {
 	return
 }
 
+func testMinHeapInvariance(suite *PairingHeapTestSuite) {
+	suite.T().Helper()
+	var items []heap.Item
+	for {
+		item := suite.heap.DeleteMin()
+		if item == nil {
+			break
+		} else {
+			items = append(items, item)
+		}
+	}
+
+	for i := 0; i < len(items)-1; i += 1 {
+		assert.True(suite.T(), items[i].Compare(items[i+1]) < 0)
+	}
+}
+
 func (suite *PairingHeapTestSuite) TestIsEmpty() {
 	assert.Equal(suite.T(), suite.heap.IsEmpty(), true)
 	suite.heap.Insert(Int(4))
@@ -78,6 +95,7 @@ func (suite *PairingHeapTestSuite) TestFindMin() {
 	suite.heap.Insert(Int(3))
 
 	assert.Equal(suite.T(), suite.heap.FindMin(), Int(2))
+	testMinHeapInvariance(suite)
 }
 
 func (suite *PairingHeapTestSuite) TestDeleteMin() {
@@ -101,6 +119,7 @@ func (suite *PairingHeapTestSuite) TestInsert() {
 	got := all(suite.heap)
 	want := rang(100)
 	assert.ElementsMatch(suite.T(), got, want)
+	testMinHeapInvariance(suite)
 }
 
 func (suite *PairingHeapTestSuite) TestFind() {
@@ -122,6 +141,7 @@ func (suite *PairingHeapTestSuite) TestFind() {
 	item = suite.heap.Find(Int(9))
 	assert.NotNil(suite.T(),item)
 	assert.Equal(suite.T(),item, Int(9))
+	testMinHeapInvariance(suite)
 }
 
 func (suite *PairingHeapTestSuite) TestAdjust() {
@@ -131,6 +151,7 @@ func (suite *PairingHeapTestSuite) TestAdjust() {
 	for i, item := range rangrev(10) {
 		assert.NotNil(suite.T(), suite.heap.Adjust(item, Int(i)))
 	}
+	testMinHeapInvariance(suite)
 }
 
 func (suite *PairingHeapTestSuite) TestDelete() {
