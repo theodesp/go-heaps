@@ -48,6 +48,25 @@ func TestSkewHeapString(t *testing.T) {
 	}
 }
 
+func TestSkewHeap(t *testing.T) {
+	skew := &SkewHeap{}
+
+	numbers := []int{4, 3, -1, 5, 9}
+
+	for _, number := range numbers {
+		skew.Insert(Int(number))
+	}
+
+	if skew.FindMin() != Int(-1) {
+		t.Fail()
+	}
+
+	skew.Clear()
+	if skew.FindMin() != nil {
+		t.Fail()
+	}
+}
+
 func Int(value int) heap.Integer {
 	return heap.Integer(value)
 }

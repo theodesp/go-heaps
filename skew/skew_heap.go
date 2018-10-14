@@ -41,7 +41,8 @@ type SkewHeap struct {
 
 // Init initializes or clears the SkewHeap
 func (h *SkewHeap) Init() *SkewHeap {
-	return &SkewHeap{}
+	h.root = &node{}
+	return h
 }
 
 // New returns an initialized SkewHeap.
