@@ -67,9 +67,9 @@ func main()  {
 | DeleteMin     | O(log n)      | O(log n)      | O(log n)      | O(log n)	    | Θ(log n)
 | Insert        | Θ(1)          | O(log n)      | O(log n)      | Θ(1)			| Θ(1)
 | Find          | O(n)          |               |               |				|
-| Delete        | O(n)          |               |               |			    | Θ(log n)
-| Adjust        | O(n)          |               |               | Θ(1) 			| Θ(log n)
-
+| Delete        | O(n)          |               | O(log n)      | O(n)			| Θ(log n)
+| Adjust        | O(n)          |               | O(log n)      | O(n) 			| Θ(log n)
+| Meld          | Θ(1)          |               |               |               |               
 
 ## Contributors
 

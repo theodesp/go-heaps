@@ -1,4 +1,4 @@
-package main
+package leftlist
 
 import (
 	"github.com/theodesp/go-heaps"

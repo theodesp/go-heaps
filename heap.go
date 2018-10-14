@@ -18,9 +18,9 @@ type Interface interface {
 // Extended adds operations on heaps are often useful.
 type Extended interface {
 	Interface
-	//// Return the heap formed by taking the union of the itemdisjoint
-	//// current heap and a
-	//Meld(a Interface) Interface
+	// Return the heap formed by taking the union of the item disjoint
+	// current heap and a
+	Meld(a Interface) Interface
 
 	// Adjusts the key of item old in heap h to new
 	Adjust(old, new Item) Item
@@ -43,7 +43,10 @@ type Item interface {
 // function will immediately return.
 type ItemIterator func(item Item) bool
 
+// String implements the Item interface
 type String string
+
+// Integer implements the Item interface
 type Integer int
 
 func (a String) Compare(b Item) int {

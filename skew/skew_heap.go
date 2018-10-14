@@ -10,12 +10,12 @@ import (
 )
 
 // Node is a leaf in the heap.
-type Node struct {
-	Item        heap.Item
-	Right, Left *Node
+type node struct {
+	item        heap.Item
+	right, left *node
 }
 
-func merge(x, y *Node) *Node {
+func merge(x, y *node) *node {
 	if x == nil {
 		return y
 	}
@@ -23,20 +23,20 @@ func merge(x, y *Node) *Node {
 	if y == nil {
 		return x
 	}
-
-	if x.Item.Compare(y.Item) == 1 {
+	// x should point to the smaller item
+	if x.item.Compare(y.item) > 0 {
 		x, y = y, x
 	}
 
-	x.Left, x.Right = x.Right, x.Left
-	x.Left = merge(y, x.Left)
+	x.left, x.right = x.right, x.left
+	x.left = merge(y, x.left)
 
 	return x
 }
 
 // SkewHeap is a skew heap implementation.
 type SkewHeap struct {
-	Root *Node
+	root *node
 }
 
 // Init initializes or clears the SkewHeap
@@ -49,28 +49,28 @@ func New() *SkewHeap { return new(SkewHeap).Init() }
 
 // Insert adds an item into the heap.
 func (h *SkewHeap) Insert(v heap.Item) heap.Item {
-	h.Root = merge(&Node{
-		Item: v,
-	}, h.Root)
+	h.root = merge(&node{
+		item: v,
+	}, h.root)
 
 	return v
 }
 
 // DeleteMin deletes the minimum value and returns it.
 func (h *SkewHeap) DeleteMin() heap.Item {
-	v := h.Root
+	v := h.root
 
-	h.Root = merge(v.Right, v.Left)
+	h.root = merge(v.right, v.left)
 
-	return v.Item
+	return v.item
 }
 
 // FindMin finds the minimum value.
 func (h *SkewHeap) FindMin() heap.Item {
-	return h.Root.Item
+	return h.root.item
 }
 
 // Clear removes all items from the heap.
 func (h *SkewHeap) Clear() {
-	h.Root = nil
+	h.Init()
 }

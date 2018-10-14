@@ -1,4 +1,4 @@
-package main
+package pairing
 
 import (
 	"github.com/theodesp/go-heaps"

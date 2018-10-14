@@ -88,6 +88,33 @@ func (suite *PairingHeapTestSuite) TestIsEmpty() {
 	assert.Equal(suite.T(), suite.heap.IsEmpty(), false)
 }
 
+func (suite *PairingHeapTestSuite) TestMeld() {
+	assert.NotNil(suite.T(), suite.heap.Meld(nil))
+
+	heapB := New()
+	heapB.Insert(Int(4))
+	heapB.Insert(Int(2))
+	heapB.Insert(Int(6))
+	heapB.Insert(Int(7))
+
+	suite.heap.Meld(heapB)
+	testMinHeapInvariance(suite)
+
+	suite.heap.Insert(Int(4))
+	suite.heap.Insert(Int(6))
+	suite.heap.Insert(Int(2))
+	suite.heap.Insert(Int(10))
+
+	heapB = New()
+	heapB.Insert(Int(1))
+	heapB.Insert(Int(3))
+	heapB.Insert(Int(5))
+	heapB.Insert(Int(7))
+
+	suite.heap.Meld(heapB)
+	testMinHeapInvariance(suite)
+}
+
 func (suite *PairingHeapTestSuite) TestFindMin() {
 	suite.heap.Insert(Int(4))
 	suite.heap.Insert(Int(2))

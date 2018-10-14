@@ -7,6 +7,7 @@ package pairing
 
 import (
 	heap "github.com/theodesp/go-heaps"
+	"fmt"
 )
 
 // PairHeap implements the Extended interface
@@ -106,7 +107,7 @@ func (p *PairHeap) IsEmpty() bool {
 
 // Resets the current PairHeap
 func (p *PairHeap) Clear() {
-	p.root = &node{}
+	p.Init()
 }
 
 // Find the smallest item in the priority queue.
@@ -120,10 +121,9 @@ func (p *PairHeap) FindMin() heap.Item {
 
 // Inserts the value to the PairHeap and returns the item
 // The complexity is O(1).
-func (p *PairHeap) Insert(v heap.Item) heap.Item {
-	n := node{item: v}
-	p.root = merge(p.root, &n)
-	return n.item
+func (p *PairHeap) Insert(item heap.Item) heap.Item {
+	p.root = merge(p.root, &node{item: item})
+	return item
 }
 
 
@@ -215,16 +215,44 @@ func (p *PairHeap) Find(item heap.Item) heap.Item {
 
 // Do calls function cb on each element of the PairingHeap, in order of appearance.
 // The behavior of Do is undefined if cb changes *p.
-func (p *PairHeap) Do(iter heap.ItemIterator) {
+func (p *PairHeap) Do(it heap.ItemIterator) {
 	if p.IsEmpty() {
 		return
 	}
-	p.root.iterItem(iter)
+	p.root.iterItem(it)
 }
 
-//func (p *PairHeap) Meld(a heap.Interface) heap.Interface  {
-//	return p
-//}
+// Return the heap formed by taking the union of the item disjoint
+// current heap and a that is of the same type
+func (p *PairHeap) Meld(a heap.Interface) heap.Interface {
+	if a == nil {
+		return p
+	}
+	switch a.(type) {
+	case *PairHeap:
+		h := a.(*PairHeap)
+		if h.IsEmpty() {
+			return p
+		}
+		if p.IsEmpty() {
+			p.root = h.root
+			h.Clear()
+			return p
+		}
+		if p.FindMin().Compare(h.FindMin()) > 0 {
+			h.root = merge(h.root, p.root)
+			p.root = h.root
+			h.Clear()
+		} else {
+			p.root = merge(p.root, h.root)
+		}
+
+	default:
+		panic(fmt.Sprintf("unexpected type %T", a))
+	}
+
+	return p
+}
 
 func merge(a, b *node) *node {
 	if a.item == nil { // Case when root is empty
