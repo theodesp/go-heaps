@@ -21,6 +21,51 @@ func TestRPHeapInteger(t *testing.T) {
 	}
 }
 
+func TestRPHeapAdjustDecrease(t *testing.T) {
+	rpheap := &RPHeap{}
+	numbers := []int{4, 3, 2, 5}
+	for _, number := range numbers {
+		rpheap.Insert(Int(number))
+	}
+	ans := []int{1, 2, 3, 5}
+	rpheap.Adjust(Int(4), Int(1))
+	for _, number := range ans {
+		if Int(number) != rpheap.DeleteMin().(heap.Integer) {
+			t.Fail()
+		}
+	}
+}
+
+func TestRPHeapAdjustIncrease(t *testing.T) {
+	rpheap := &RPHeap{}
+	numbers := []int{4, 3, 2, 5}
+	for _, number := range numbers {
+		rpheap.Insert(Int(number))
+	}
+	ans := []int{2, 3, 5, 6}
+	rpheap.Adjust(Int(4), Int(6))
+	for _, number := range ans {
+		if Int(number) != rpheap.DeleteMin().(heap.Integer) {
+			t.Fail()
+		}
+	}
+}
+
+func TestRPHeapDelete(t *testing.T) {
+	rpheap := &RPHeap{}
+	numbers := []int{4, 3, 2, 5}
+	for _, number := range numbers {
+		rpheap.Insert(Int(number))
+	}
+	ans := []int{2, 3, 5}
+	rpheap.Delete(Int(4))
+	for _, number := range ans {
+		if Int(number) != rpheap.DeleteMin().(heap.Integer) {
+			t.Fail()
+		}
+	}
+}
+
 func TestRPHeapString(t *testing.T) {
 	rpheap := &RPHeap{}
 
