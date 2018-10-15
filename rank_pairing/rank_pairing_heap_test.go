@@ -36,6 +36,21 @@ func TestRPHeapAdjustDecrease(t *testing.T) {
 	}
 }
 
+func TestRPHeapAdjustNotExist(t *testing.T) {
+	rpheap := &RPHeap{}
+	numbers := []int{4, 3, 2, 5}
+	for _, number := range numbers {
+		rpheap.Insert(Int(number))
+	}
+	ans := []int{2, 3, 4, 5}
+	rpheap.Adjust(Int(6), Int(1))
+	for _, number := range ans {
+		if Int(number) != rpheap.DeleteMin().(heap.Integer) {
+			t.Fail()
+		}
+	}
+}
+
 func TestRPHeapAdjustIncrease(t *testing.T) {
 	rpheap := &RPHeap{}
 	numbers := []int{4, 3, 2, 5}
@@ -104,20 +119,13 @@ func TestRPHeapInteger2(t *testing.T) {
 	}
 }
 
-func TestRPHeapMerge0(t *testing.T) {
+func TestRPHeapMerge(t *testing.T) {
 	runTestMerge([]int{2, 8, 5, 7}, []int{4, 9, 6}, t)
-}
-
-func TestRPHeapMerge1(t *testing.T) {
 	runTestMerge([]int{4, 9, 6}, []int{2, 8, 5, 7}, t)
-}
-
-func TestRPHeapMerge2(t *testing.T) {
 	runTestMerge([]int{2}, []int{4, 9, 6}, t)
-}
-
-func TestRPHeapMerge3(t *testing.T) {
 	runTestMerge([]int{2, 8, 5, 7}, []int{4}, t)
+	runTestMerge([]int{2, 8, 5, 7}, []int{}, t)
+	runTestMerge([]int{}, []int{4, 9, 6}, t)
 }
 
 func runTestMerge(arr1, arr2 []int, t *testing.T) {
