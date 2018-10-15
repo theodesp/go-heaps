@@ -86,7 +86,7 @@ func runTestMerge(arr1, arr2 []int, t *testing.T) {
 	for _, number := range arr2 {
 		rpheap2.Insert(Int(number))
 	}
-	rpheap1.Merge(rpheap2)
+	rpheap1 = rpheap1.Meld(rpheap2).(*RPHeap)
 	for _, number := range ans {
 		if Int(number) != rpheap1.DeleteMin().(heap.Integer) {
 			t.Fail()

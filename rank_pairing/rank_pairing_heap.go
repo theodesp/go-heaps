@@ -1,6 +1,8 @@
 package rank_paring
 
 import (
+	"fmt"
+
 	heap "github.com/theodesp/go-heaps"
 )
 
@@ -79,26 +81,31 @@ func (r *RPHeap) Clear() {
 
 // Merge a RankPairingHeap r0 into a heap r, then clear r0
 // Complexity: O(1)
-func (r *RPHeap) Merge(r0 *RPHeap) {
+func (r *RPHeap) Meld(a heap.Interface) heap.Interface {
+	switch a.(type) {
+	case *RPHeap:
+	default:
+		panic(fmt.Sprintf("unexpected type %T", a))
+	}
+	r0 := a.(*RPHeap)
 	if r.head == nil {
 		r.head = r0.head
 		r.size = r0.size
 		r0.Clear()
-		return
+		return r
 	}
 	if r0.head == nil {
-		return
+		return r
 	}
 	if r.head.Val.Compare(r0.head.Val) < 0 {
 		mergeRes := merge(r, r0)
-		r.size = mergeRes.size
-		r.head = mergeRes.head
+		r0.Clear()
+		return mergeRes
 	} else {
 		mergeRes := merge(r0, r)
-		r.size = mergeRes.size
-		r.head = mergeRes.head
+		r0.Clear()
+		return mergeRes
 	}
-	r0.Clear()
 }
 
 // Size returns the size of the RPHeap
@@ -112,7 +119,10 @@ func merge(r0, r1 *RPHeap) *RPHeap {
 		ptr.Next, ptr.Parent, ptr.Left, ptr.Rank = nil, nil, nil, 0
 		r0.insertRoot(ptr)
 		r0.size++
-		return r0
+		return &RPHeap{
+			head: r0.head,
+			size: r0.size,
+		}
 	} else if r0.Size() == 1 {
 		return merge(r1, r0)
 	}
@@ -120,7 +130,10 @@ func merge(r0, r1 *RPHeap) *RPHeap {
 	r0.head.Next.Parent = r1.head.Next
 	r0.head.Next, r1.head.Next = r1.head.Next, r0.head.Next
 	r0.size += r1.size
-	return r0
+	return &RPHeap{
+		head: r0.head,
+		size: r0.size,
+	}
 }
 
 func (r *RPHeap) maxBucketSize() int {
