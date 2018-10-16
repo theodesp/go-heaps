@@ -7,35 +7,35 @@ import (
 )
 
 type node struct {
-	Val                heap.Item
-	Left, Next, Parent *node
-	Rank               int
+	item               heap.Item
+	left, next, parent *node
+	rank               int
 }
 
-// RPHeap is an implementation of a Rank Pairing Heap.
+// RPHeap is an implementation of a rank Pairing Heap.
 // The zero value for RPHeap Root is an empty Heap.
 type RPHeap struct {
 	head *node
 	size int
 }
 
-type NInf struct{}
+type nInf struct{}
 
-func (a NInf) Compare(b heap.Item) int {
+func (a nInf) Compare(b heap.Item) int {
 	switch b.(type) {
-	case NInf:
+	case nInf:
 		return 0
 	default:
 		return -1
 	}
 }
 
-// wrap compare function to support NInf (negative inf) type
+// wrap compare function to support nInf (negative inf) type
 func compare(a, b heap.Item) int {
 	switch b.(type) {
-	case NInf:
+	case nInf:
 		switch a.(type) {
-		case NInf:
+		case nInf:
 			return 0
 		default:
 			return 1
@@ -45,52 +45,57 @@ func compare(a, b heap.Item) int {
 	}
 }
 
-// Init initializes or clears the RankPairingHeap
+// Init initializes or clears the rankPairingHeap
 func (p *RPHeap) Init() *RPHeap {
-	return &RPHeap{}
+	p.head = &node{}
+	p.size = 0
+	return p
 }
 
-// New returns an initialized RankPairingHeap.
+// New returns an initialized rankPairingHeap.
 func New() *RPHeap { return new(RPHeap).Init() }
 
 // FindMin returns the value of root
 // Complexity: O(1)
 func (r *RPHeap) FindMin() heap.Item {
-	return r.head.Val
+	return r.head.item
 }
 
 // Insert the value val into the heap and return it
 // Complexity: O(1)
 func (r *RPHeap) Insert(val heap.Item) heap.Item {
 	ptr := &node{
-		Val: val,
+		item: val,
 	}
 	r.insertRoot(ptr)
 	r.size++
 	return val
 }
 
-// DeleteMin removes the top most value from the RankPairingHeap and returns it
+// DeleteMin removes the top most value from the rankPairingHeap and returns it
 // Complexity: O(log n)
 func (r *RPHeap) DeleteMin() heap.Item {
 	bucket := make([]*node, r.maxBucketSize())
-	ret := r.head.Val
+	ret := r.head.item
 	// an empty heap will panic here
+	if ret == nil {
+		return nil
+	}
 	r.size--
-	for ptr := r.head.Left; ptr != nil; {
-		nextPtr := ptr.Next
-		ptr.Next = nil
-		ptr.Parent = nil
+	for ptr := r.head.left; ptr != nil; {
+		nextPtr := ptr.next
+		ptr.next = nil
+		ptr.parent = nil
 		bucket = multiPass(bucket, ptr)
 		ptr = nextPtr
 	}
-	for ptr := r.head.Next; ptr != r.head; {
-		nextPtr := ptr.Next
-		ptr.Next = nil
+	for ptr := r.head.next; ptr != r.head; {
+		nextPtr := ptr.next
+		ptr.next = nil
 		bucket = multiPass(bucket, ptr)
 		ptr = nextPtr
 	}
-	r.head = nil
+	r.head = &node{}
 	for _, ptr := range bucket {
 		if ptr != nil {
 			r.insertRoot(ptr)
@@ -99,13 +104,12 @@ func (r *RPHeap) DeleteMin() heap.Item {
 	return ret
 }
 
-// Clear the whole RankPairingHeap
+// Clear the whole rankPairingHeap
 func (r *RPHeap) Clear() {
-	r.head = nil
-	r.size = 0
+	r.Init()
 }
 
-// Merge a RankPairingHeap r0 into a heap r, then clear r0
+// Merge a rankPairingHeap r0 into a heap r, then clear r0
 // Complexity: O(1)
 func (r *RPHeap) Meld(a heap.Interface) heap.Interface {
 	switch a.(type) {
@@ -114,16 +118,16 @@ func (r *RPHeap) Meld(a heap.Interface) heap.Interface {
 		panic(fmt.Sprintf("unexpected type %T", a))
 	}
 	r0 := a.(*RPHeap)
-	if r.head == nil {
+	if r.head.item == nil {
 		r.head = r0.head
 		r.size = r0.size
 		r0.Clear()
 		return r
 	}
-	if r0.head == nil {
+	if r0.head.item == nil {
 		return r
 	}
-	if compare(r.head.Val, r0.head.Val) < 0 {
+	if compare(r.head.item, r0.head.item) < 0 {
 		mergeRes := merge(r, r0)
 		r0.Clear()
 		return mergeRes
@@ -146,8 +150,8 @@ func (r *RPHeap) Adjust(old, new heap.Item) heap.Item {
 	if ptr == nil {
 		return nil
 	}
-	if compare(ptr.Val, new) < 0 {
-		r.decrease(ptr, NInf{})
+	if compare(ptr.item, new) < 0 {
+		r.decrease(ptr, nInf{})
 		r.DeleteMin()
 		r.Insert(new)
 	} else {
@@ -166,7 +170,7 @@ func (r *RPHeap) Delete(val heap.Item) heap.Item {
 	if ptr == r.head {
 		return r.DeleteMin()
 	}
-	r.decrease(ptr, NInf{})
+	r.decrease(ptr, nInf{})
 	r.DeleteMin()
 	return val
 }
@@ -174,55 +178,55 @@ func (r *RPHeap) Delete(val heap.Item) heap.Item {
 // Decrease the value of an item
 // Complexity is O(log n)
 func (r *RPHeap) decrease(ptr *node, val heap.Item) {
-	if compare(val, ptr.Val) < 0 {
-		ptr.Val = val
+	if compare(val, ptr.item) < 0 {
+		ptr.item = val
 	}
 	if ptr == r.head {
 		return
 	}
-	if ptr.Parent == nil {
-		if compare(ptr.Val, r.head.Val) < 0 {
+	if ptr.parent == nil {
+		if compare(ptr.item, r.head.item) < 0 {
 			r.head = ptr
 		}
 	} else {
-		parent := ptr.Parent
-		if ptr == parent.Left {
-			parent.Left = ptr.Next
-			if parent.Left != nil {
-				parent.Left.Parent = parent
+		parent := ptr.parent
+		if ptr == parent.left {
+			parent.left = ptr.next
+			if parent.left != nil {
+				parent.left.parent = parent
 			}
 		} else {
-			parent.Next = ptr.Next
-			if parent.Next != nil {
-				parent.Next.Parent = parent
+			parent.next = ptr.next
+			if parent.next != nil {
+				parent.next.parent = parent
 			}
 		}
-		ptr.Next, ptr.Parent = nil, nil
-		if ptr.Left != nil {
-			ptr.Rank = ptr.Left.Rank + 1
+		ptr.next, ptr.parent = nil, nil
+		if ptr.left != nil {
+			ptr.rank = ptr.left.rank + 1
 		} else {
-			ptr.Rank = 0
+			ptr.rank = 0
 		}
 		r.insertRoot(ptr)
-		if parent.Parent == nil {
-			parent.Rank = getRank(parent.Left) + 1
+		if parent.parent == nil {
+			parent.rank = getrank(parent.left) + 1
 		} else {
-			for parent.Parent != nil {
-				leftRank := getRank(parent.Left)
-				nextRank := getRank(parent.Next)
-				newRank := leftRank + 1
-				if leftRank != nextRank {
-					if leftRank > nextRank {
-						newRank = leftRank
+			for parent.parent != nil {
+				leftrank := getrank(parent.left)
+				nextrank := getrank(parent.next)
+				newrank := leftrank + 1
+				if leftrank != nextrank {
+					if leftrank > nextrank {
+						newrank = leftrank
 					} else {
-						newRank = nextRank
+						newrank = nextrank
 					}
 				}
-				if newRank >= parent.Rank {
+				if newrank >= parent.rank {
 					break
 				}
-				parent.Rank = newRank
-				parent = parent.Parent
+				parent.rank = newrank
+				parent = parent.parent
 			}
 		}
 	}
@@ -233,17 +237,17 @@ func (r *RPHeap) decrease(ptr *node, val heap.Item) {
 func (r *RPHeap) find(root *node, val heap.Item) *node {
 	if root == nil {
 		return nil
-	} else if compare(root.Val, val) == 0 {
+	} else if compare(root.item, val) == 0 {
 		return root
 	} else {
-		if leftfind := r.find(root.Left, val); leftfind != nil {
+		if leftfind := r.find(root.left, val); leftfind != nil {
 			return leftfind
 		}
-		for ptr := root.Next; ptr != nil && ptr != root; ptr = ptr.Next {
-			if compare(ptr.Val, val) == 0 {
+		for ptr := root.next; ptr != nil && ptr != root; ptr = ptr.next {
+			if compare(ptr.item, val) == 0 {
 				return ptr
 			}
-			if leftfind := r.find(ptr.Left, val); leftfind != nil {
+			if leftfind := r.find(ptr.left, val); leftfind != nil {
 				return leftfind
 			}
 		}
@@ -251,17 +255,17 @@ func (r *RPHeap) find(root *node, val heap.Item) *node {
 	return nil
 }
 
-func getRank(root *node) int {
+func getrank(root *node) int {
 	if root == nil {
 		return -1
 	}
-	return root.Rank
+	return root.rank
 }
 
 func merge(r0, r1 *RPHeap) *RPHeap {
 	if r1.Size() == 1 {
 		ptr := r1.head
-		ptr.Next, ptr.Parent, ptr.Left, ptr.Rank = nil, nil, nil, 0
+		ptr.next, ptr.parent, ptr.left, ptr.rank = nil, nil, nil, 0
 		r0.insertRoot(ptr)
 		r0.size++
 		return &RPHeap{
@@ -271,7 +275,7 @@ func merge(r0, r1 *RPHeap) *RPHeap {
 	} else if r0.Size() == 1 {
 		return merge(r1, r0)
 	}
-	r0.head.Next, r1.head.Next = r1.head.Next, r0.head.Next
+	r0.head.next, r1.head.next = r1.head.next, r0.head.next
 	r0.size += r1.size
 	return &RPHeap{
 		head: r0.head,
@@ -289,25 +293,25 @@ func (r *RPHeap) maxBucketSize() int {
 }
 
 func (r *RPHeap) insertRoot(ptr *node) {
-	if r.head == nil {
+	if r.head.item == nil {
 		r.head = ptr
-		ptr.Next = ptr
+		ptr.next = ptr
 	} else {
-		ptr.Next = r.head.Next
-		r.head.Next = ptr
-		if compare(ptr.Val, r.head.Val) < 0 {
+		ptr.next = r.head.next
+		r.head.next = ptr
+		if compare(ptr.item, r.head.item) < 0 {
 			r.head = ptr
 		}
 	}
 }
 
 func multiPass(bucket []*node, ptr *node) []*node {
-	for bucket[ptr.Rank] != nil {
-		rank := ptr.Rank
+	for bucket[ptr.rank] != nil {
+		rank := ptr.rank
 		ptr = link(ptr, bucket[rank])
 		bucket[rank] = nil
 	}
-	bucket[ptr.Rank] = ptr
+	bucket[ptr.rank] = ptr
 	return bucket
 }
 
@@ -316,19 +320,19 @@ func link(left *node, right *node) *node {
 		return left
 	}
 	var winner, loser *node
-	if compare(right.Val, left.Val) < 0 {
+	if compare(right.item, left.item) < 0 {
 		winner = right
 		loser = left
 	} else {
 		winner = left
 		loser = right
 	}
-	loser.Parent = winner
-	if winner.Left != nil {
-		loser.Next = winner.Left
-		loser.Next.Parent = loser
+	loser.parent = winner
+	if winner.left != nil {
+		loser.next = winner.left
+		loser.next.parent = loser
 	}
-	winner.Left = loser
-	winner.Rank = loser.Rank + 1
+	winner.left = loser
+	winner.rank = loser.rank + 1
 	return winner
 }

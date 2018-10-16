@@ -29,7 +29,7 @@ func main() {
 	heap2.Insert(Int(9))
 	heap2.Insert(Int(6))
 
-	heap1.Merge(heap2)
+	heap1.Meld(heap2)
 
 	fmt.Println(heap1.DeleteMin()) // 2
 	fmt.Println(heap1.DeleteMin()) // 4

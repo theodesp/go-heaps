@@ -8,7 +8,7 @@ import (
 )
 
 func TestRPHeapInteger(t *testing.T) {
-	rpheap := &RPHeap{}
+	rpheap := New()
 	numbers := []int{4, 3, 2, 5}
 	for _, number := range numbers {
 		rpheap.Insert(Int(number))
@@ -19,10 +19,16 @@ func TestRPHeapInteger(t *testing.T) {
 			t.Fail()
 		}
 	}
+	if rpheap.DeleteMin() != nil {
+		t.Fail()
+	}
+	if rpheap.FindMin() != nil {
+		t.Fail()
+	}
 }
 
 func TestRPHeapAdjustDecrease(t *testing.T) {
-	rpheap := &RPHeap{}
+	rpheap := New()
 	numbers := []int{4, 3, 2, 5}
 	for _, number := range numbers {
 		rpheap.Insert(Int(number))
@@ -36,8 +42,24 @@ func TestRPHeapAdjustDecrease(t *testing.T) {
 	}
 }
 
+func TestRPHeapAdjustDecrease2(t *testing.T) {
+	rpheap := New()
+	numbers := []int{9, 2, 4, 3, 1, 5, 6, 8, 7, 0}
+	for _, number := range numbers {
+		rpheap.Insert(Int(number))
+	}
+	rpheap.DeleteMin()
+	ans := []int{0, 1, 2, 3, 5, 6, 7, 8, 9}
+	rpheap.Adjust(Int(4), Int(0))
+	for _, number := range ans {
+		if res := rpheap.DeleteMin().(heap.Integer); Int(number) != res {
+			t.Fail()
+		}
+	}
+}
+
 func TestRPHeapAdjustNotExist(t *testing.T) {
-	rpheap := &RPHeap{}
+	rpheap := New()
 	numbers := []int{4, 3, 2, 5}
 	for _, number := range numbers {
 		rpheap.Insert(Int(number))
@@ -52,7 +74,7 @@ func TestRPHeapAdjustNotExist(t *testing.T) {
 }
 
 func TestRPHeapAdjustIncrease(t *testing.T) {
-	rpheap := &RPHeap{}
+	rpheap := New()
 	numbers := []int{4, 3, 2, 5}
 	for _, number := range numbers {
 		rpheap.Insert(Int(number))
@@ -67,7 +89,7 @@ func TestRPHeapAdjustIncrease(t *testing.T) {
 }
 
 func TestRPHeapDelete(t *testing.T) {
-	rpheap := &RPHeap{}
+	rpheap := New()
 	numbers := []int{4, 3, 2, 5}
 	for _, number := range numbers {
 		rpheap.Insert(Int(number))
@@ -82,7 +104,7 @@ func TestRPHeapDelete(t *testing.T) {
 }
 
 func TestRPHeapString(t *testing.T) {
-	rpheap := &RPHeap{}
+	rpheap := New()
 
 	strs := []string{"a", "ccc", "bb", "d"}
 
@@ -100,7 +122,7 @@ func TestRPHeapString(t *testing.T) {
 }
 
 func TestRPHeapInteger2(t *testing.T) {
-	rpheap := &RPHeap{}
+	rpheap := New()
 	rpheap.Insert(Int(5))
 	rpheap.Insert(Int(3))
 	if rpheap.DeleteMin().(heap.Integer) != Int(3) {
@@ -131,8 +153,8 @@ func TestRPHeapMerge(t *testing.T) {
 func runTestMerge(arr1, arr2 []int, t *testing.T) {
 	ans := append(arr1, arr2...)
 	sort.Ints(ans)
-	rpheap1 := &RPHeap{}
-	rpheap2 := &RPHeap{}
+	rpheap1 := New()
+	rpheap2 := New()
 	for _, number := range arr1 {
 		rpheap1.Insert(Int(number))
 	}
