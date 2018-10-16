@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/theodesp/go-heaps"
-	"github.com/theodesp/go-heaps/leftlist"
 	"fmt"
+
+	"github.com/theodesp/go-heaps"
+	"github.com/theodesp/go-heaps/leftist"
 )
 
 func main() {

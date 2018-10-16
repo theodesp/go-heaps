@@ -4,7 +4,7 @@ os:
  - linux
 
 # This project contains references to the absolute GitHub path,
-# e.g. github.com/theodesp/go-heaps/leftlist.
+# e.g. github.com/theodesp/go-heaps/leftist.
 # That means, by default, if someone forks the repo and makes changes, Travis
 # won't pass for the branch on their own repo. To fix that, we move the
 # directory.
