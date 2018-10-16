@@ -54,7 +54,7 @@ func merge(x, y *Node) *Node {
 
 // Init initializes or clears the LeftistHeap
 func (h *LeftistHeap) Init() *LeftistHeap {
-	h.root = &Node{}
+	h.root = nil
 	return h
 }
 
@@ -84,6 +84,9 @@ func (h *LeftistHeap) DeleteMin() heap.Item {
 // FindMin finds the minimum value.
 // The complexity is O(1).
 func (h *LeftistHeap) FindMin() heap.Item {
+	if h.root == nil {
+		return nil
+	}
 	return h.root.item
 }
 
