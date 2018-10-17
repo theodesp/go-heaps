@@ -34,6 +34,7 @@ $ go get -u github.com/theodesp/go-heaps
 * [Fibonacci Heap](https://en.wikipedia.org/wiki/Fibonacci_heap): a Fibonacci heap is a data structure for priority queue operations, consisting of a collection of heap-ordered trees. It has a better amortized running time than many other priority queue data structures including the binary heap and binomial heap.
 * [Binomial Heap](https://www.geeksforgeeks.org/binomial-heap-2/): A Binomial Heap is a collection of Binomial Trees. A Binomial Heap is a set of Binomial Trees where each Binomial Tree follows Min Heap property. And there can be at most one Binomial Tree of any degree.
 * [Treap Heap](https://en.wikipedia.org/wiki/Treap): A Treap and the randomized binary search tree are two closely related forms of binary search tree data structures that maintain a dynamic set of ordered keys and allow binary searches among the keys.
+* [Rank Pairing Heap](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.153.4644&rep=rep1&type=pdf): A heap (priority queue) implementation that combines the asymptotic efficiency of Fibonacci heaps with much of the simplicity of pairing heaps
 
 ## Usage
 
@@ -72,7 +73,20 @@ func main()  {
 | Adjust        | O(n)          |               | O(log n)      | O(n) 			| Θ(log n)      | O(n)          |
 | Meld          | Θ(1)          |               |               |               |               |               |
 
+| Operation     | Rank Pairing  | 
+| ------------- |:-------------:|
+| FindMin       | Θ(1)          |
+| DeleteMin     | O(log n)      | 
+| Insert        | Θ(1)          | 
+| Find          | O(n)          |     
+| Delete        | O(n)          |             
+| Adjust        | O(n)          |
+| Meld          | Θ(1)          |
+
+
+
 ## Contributors
+
 
 Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
 
