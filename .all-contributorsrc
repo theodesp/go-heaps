@@ -62,6 +62,24 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "lhauspie",
+      "name": "Logan HAUSPIE",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/25682509?v=4",
+      "profile": "https://github.com/lhauspie",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "erjiaqing",
+      "name": "Song Guo",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/5517838?v=4",
+      "profile": "https://ejq.me/",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }
