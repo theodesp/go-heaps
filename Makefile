@@ -10,7 +10,14 @@ debs:
 
 .PHONY: test
 test:
-	GOPATH=$(GOPATH) go test -race $$(go list ./... | grep -v example) -coverprofile=coverage.txt -covermode=atomic
+	-rm coverage.txt
+	@for package in $$(go list ./... | grep -v example) ; do \
+		GOPATH=$(GOPATH) go test -race -coverprofile=profile.out -covermode=atomic $$package ; \
+		if [ -f profile.out ]; then \
+			cat profile.out >> coverage.txt ; \
+			rm profile.out ; \
+		fi \
+	done
 
 .PHONY: bench
 bench:
