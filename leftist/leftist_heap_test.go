@@ -8,7 +8,7 @@ import (
 )
 
 func TestLeftistHeapInteger(t *testing.T) {
-	heap := &LeftistHeap{}
+	heap := New().Init()
 
 	numbers := []int{4, 3, 2, 5}
 
