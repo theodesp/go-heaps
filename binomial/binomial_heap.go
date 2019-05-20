@@ -7,6 +7,7 @@ package binomial
 
 import (
 	"math"
+	
 	heap "github.com/theodesp/go-heaps"
 )
 
@@ -60,8 +61,8 @@ func (b *BinomialHeap) DeleteMin() heap.Item {
 // Deletes passed item from the heap.
 // The complexity is O(log n).
 func (p *BinomialHeap) Delete(item heap.Item) {
-	found := p.FindAny(item)
-	next := *found
+	found := p.findAny(item)
+	next := found
 	for next.parent != nil {
 		temp := next.item
 		next.item = next.parent.item
@@ -69,31 +70,31 @@ func (p *BinomialHeap) Delete(item heap.Item) {
 		
 		next = next.parent
 	}
-	(*next).item = heap.Integer(math.Inf(-1))
+	next.item = heap.Integer(math.Inf(-1))
 	p.DeleteMin()
 }
 
 // FindAny returns the address of item in the heap.
-func (b *BinomialHeap) FindAny(item heap.Item) **node {
+func (b *BinomialHeap) findAny(item heap.Item) *node {
 	next := b.root
 	backToParent := false
 	
 	for next != nil {
 		if next.child != nil && !backToParent {
 			if next.item == item {
-				return &next
+				return next
 			}
 			next = next.child
 			backToParent = false
 		} else if next.sibling != nil  {
 			if next.item == item {
-				return &next
+				return next
 			}
 			next = next.sibling
 			backToParent = false
 		} else if next.parent != nil {
 			if next.item == item {
-				return &next
+				return next
 			}
 			next = next.parent
 			backToParent = true
@@ -101,7 +102,7 @@ func (b *BinomialHeap) FindAny(item heap.Item) **node {
 			next = nil
 		}
 	}
-	return &b.root
+	return b.root
 }
 
 // FindMin returns the smallest item in the heap.
