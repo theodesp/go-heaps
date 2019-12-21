@@ -284,7 +284,7 @@ func merge(r0, r1 *RPHeap) *RPHeap {
 }
 
 func (r *RPHeap) maxBucketSize() int {
-	bit, cnt := 1, r.size
+	bit, cnt := 0, r.size
 	for cnt > 1 {
 		cnt /= 2
 		bit++
