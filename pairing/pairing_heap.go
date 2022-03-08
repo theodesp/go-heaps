@@ -6,8 +6,9 @@
 package pairing
 
 import (
-	heap "github.com/theodesp/go-heaps"
 	"fmt"
+
+	heap "github.com/theodesp/go-heaps"
 )
 
 // PairHeap implements the Extended interface
@@ -16,7 +17,7 @@ var _ heap.Extended = (*PairHeap)(nil)
 // PairHeap is an implementation of a Pairing Heap.
 // The zero value for PairHeap Root is an empty Heap.
 type PairHeap struct {
-	root       *node
+	root *node
 }
 
 // node contains the current item and the list if the sub-heaps
@@ -126,12 +127,11 @@ func (p *PairHeap) Insert(item heap.Item) heap.Item {
 	return item
 }
 
-
 // toDelete details what item to remove in a node call.
 type toDelete int
 
 const (
-	removeItem toDelete = iota   // removes the given item
+	removeItem toDelete = iota // removes the given item
 	removeMin                  // removes min item in the heap
 )
 
@@ -162,6 +162,9 @@ func (p *PairHeap) deleteItem(item heap.Item, typ toDelete) heap.Item {
 			node := p.root.findNode(item)
 			if node == nil {
 				return nil
+			} else if node == p.root {
+				result = *p.root
+				p.root = mergePairs(p.root, p.root.children)
 			} else {
 				children := node.detach()
 				p.root.children = append(p.root.children, children...)
@@ -211,7 +214,6 @@ func (p *PairHeap) Find(item heap.Item) heap.Item {
 	})
 	return found
 }
-
 
 // Do calls function cb on each element of the PairingHeap, in order of appearance.
 // The behavior of Do is undefined if cb changes *p.

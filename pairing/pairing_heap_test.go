@@ -1,13 +1,14 @@
 package pairing
 
 import (
-	"testing"
-	"github.com/stretchr/testify/suite"
-	"github.com/stretchr/testify/assert"
-	heap "github.com/theodesp/go-heaps"
 	"fmt"
 	"math/rand"
+	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
+	heap "github.com/theodesp/go-heaps"
 )
 
 type PairingHeapTestSuite struct {
@@ -156,8 +157,8 @@ func (suite *PairingHeapTestSuite) TestFind() {
 	suite.heap.Insert(Int(4))
 
 	item = suite.heap.Find(Int(4))
-	assert.NotNil(suite.T(),item)
-	assert.Equal(suite.T(),item, Int(4))
+	assert.NotNil(suite.T(), item)
+	assert.Equal(suite.T(), item, Int(4))
 
 	suite.heap.Insert(Int(8))
 	suite.heap.Insert(Int(2))
@@ -166,8 +167,8 @@ func (suite *PairingHeapTestSuite) TestFind() {
 	suite.heap.Insert(Int(9))
 
 	item = suite.heap.Find(Int(9))
-	assert.NotNil(suite.T(),item)
-	assert.Equal(suite.T(),item, Int(9))
+	assert.NotNil(suite.T(), item)
+	assert.Equal(suite.T(), item, Int(9))
 	testMinHeapInvariance(suite)
 }
 
@@ -179,6 +180,20 @@ func (suite *PairingHeapTestSuite) TestAdjust() {
 		assert.NotNil(suite.T(), suite.heap.Adjust(item, Int(i)))
 	}
 	testMinHeapInvariance(suite)
+}
+
+func (suite *PairingHeapTestSuite) TestDeleteBug() {
+	vs := []int{3, 4, 5, 6, 7, 8}
+	for _, v := range vs {
+		suite.heap.Insert(Int(v))
+	}
+	assert.Equal(suite.T(), Int(3), suite.heap.Delete(Int(3)))
+	assert.Nil(suite.T(), suite.heap.Find(Int(3)))
+	i := suite.heap.DeleteMin()
+	assert.Equal(suite.T(), Int(4), i)
+
+	assert.Equal(suite.T(), Int(6), suite.heap.Delete(Int(6)))
+	assert.Nil(suite.T(), suite.heap.Find(Int(6)))
 }
 
 func (suite *PairingHeapTestSuite) TestDelete() {
