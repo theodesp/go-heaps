@@ -28,7 +28,7 @@ $ go get -u github.com/theodesp/go-heaps
 
 **Heaps**
 
-* [Pairing Heap](https://en.wikipedia.org/wiki/Pairing_heap): A pairing heap is a type of heap data structure with relatively simple implementation and excellent practical amortized performance.
+* [Pairing Heap](https://en.wikipedia.org/wiki/Pairing_heap): A pairing heap is a type of [heap data structure](https://www.scaler.com/topics/data-structures/heap-data-structure/) with relatively simple implementation and excellent practical amortized performance.
 * [Leftist Heap](https://www.geeksforgeeks.org/leftist-tree-leftist-heap/): a variant of a binary heap. Every node has an s-value which is the distance to the nearest leaf. In contrast to a binary heap, a leftist tree attempts to be very unbalanced.
 * [Skew Heap](https://en.wikipedia.org/wiki/Skew_heap): A skew heap (or self-adjusting heap) is a heap data structure implemented as a binary tree. Skew heaps are advantageous because of their ability to merge more quickly than binary heaps.
 * [Fibonacci Heap](https://en.wikipedia.org/wiki/Fibonacci_heap): a Fibonacci heap is a data structure for priority queue operations, consisting of a collection of heap-ordered trees. It has a better amortized running time than many other priority queue data structures including the binary heap and binomial heap.
